@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<h1>Установка приложения...</h1>
+<script src="//api.bitrix24.com/api/v1/"></script>
+<script>
+    BX24.init(() => {
+      console.log(BX24.getAuth())
+      BX24.callMethod('placement.bind',{PLACEMENT: 'CRM_DEAL_DETAIL_TOOLBAR',
+        HANDLER: 'https://formapp.polyservice.ru/',
+        TITLE: 'Формы заявок'});
+      BX24.callMethod('placement.bind',{PLACEMENT: 'TASK_VIEW_TOP_PANEL',
+        HANDLER: 'https://formapp.polyservice.ru/',
+        TITLE: 'ФОРМЫ ЗАЯВОК'});
+      setTimeout(() => {
+        BX24.callMethod('placement.bind',{PLACEMENT: 'SONET_GROUP_DETAIL_TAB',
+          HANDLER: 'https://formapp.polyservice.ru/',
+          TITLE: 'Формы заявок'});
+        BX24.callMethod('placement.bind',{PLACEMENT: 'CRM_COMPANY_DETAIL_TOOLBAR',
+          HANDLER: 'https://formapp.polyservice.ru/',
+          TITLE: 'Формы заявок'});
+        BX24.installFinish()
+      })
+
+    })
+</script>
+</body>
+</html>
