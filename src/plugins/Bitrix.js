@@ -10,25 +10,75 @@ export default {
       })
     })
   },
-
-  callBatch (object, bHaltOnError = false) {
+  callMethodFull (method, params) {
     return new Promise((resolve, reject) => {
-      window.BX24.callBatch(object, (res) => {}, bHaltOnError)
+      window.BX24.callMethod(method, params, (res) => {
+        if (res.error()) {
+          reject(res.error())
+        } else {
+          resolve(res.answer)
+        }
+      })
+    })
+  },
+  async getList (object) {
+    const params = object.params
+    const firstRequest = await this.callMethodFull(object.method, object.params)
+    let next = 0
+    const batchList = []
+    object.params.start = 0
+    while (firstRequest.total > next) {
+      params.start = next
+      batchList.push({
+        method: object.method,
+        params: {
+          ...object.params,
+          start: next
+        }
+      })
+      next += 50
+    }
+
+    const batchListChunk = this._chunkArray(batchList, 50)
+    const allProjects = []
+
+    for (const batch of batchListChunk) {
+      const result = await this.callBatch(batch)
+      const resultItems = result.map(item => item.data())
+      for (const value of resultItems) {
+        allProjects.push(...value)
+      }
+    }
+    return allProjects
+  },
+  _chunkArray (array, chunk) {
+    const newArray = []
+    for (let i = 0; i < array.length; i += chunk) {
+      newArray.push(array.slice(i, i + chunk))
+    }
+    return newArray
+  },
+
+  callBatch (object) {
+    return new Promise((resolve, reject) => {
+      window.BX24.callBatch(object, (res) => {
+        resolve(res)
+      })
     })
   },
 
   selectUsers (callback) {
     return new Promise(resolve => {
-        window.BX24.selectUsers((res) => {
-          resolve(res)
-        })
+      window.BX24.selectUsers((res) => {
+        resolve(res)
+      })
     })
   },
   selectUser (callback) {
     return new Promise(resolve => {
-        window.BX24.selectUser((res) => {
-          resolve(res)
-        })
+      window.BX24.selectUser((res) => {
+        resolve(res)
+      })
     })
   },
   сurrentUser () {
@@ -42,14 +92,14 @@ export default {
   },
 
   selectCRM (params) {
-  return new Promise(resolve => {
-    window.BX24.init(() => {
-      window.BX24.selectCRM(params, (res) => {
-        console.log(res, 'из функции')
-        resolve(res)
+    return new Promise(resolve => {
+      window.BX24.init(() => {
+        window.BX24.selectCRM(params, (res) => {
+          console.log(res, 'из функции')
+          resolve(res)
+        })
       })
     })
-  })
   },
 
   select (params, callback) {

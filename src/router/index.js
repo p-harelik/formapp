@@ -53,6 +53,19 @@ const routes = [
     component: () => import('../views/Bookkeeping-dept/BookkeepingDepFormItem')
   },
   {
+    path: '/projects',
+    name: 'ProjectsFormList',
+    component: () => import('../views/Projects/ProjectsFormList')
+  },
+  {
+    path: '/projects/:formid',
+    name: 'ProjectsFormItem',
+    meta: {
+      breadcrumb: [{ text: 'Реализация проектов', to: '/projects' }]
+    },
+    component: () => import('../views/Projects/ProjectsFormItem')
+  },
+  {
     path: '/resources',
     name: 'Resources',
     component: () => import('../views/Resources.vue')

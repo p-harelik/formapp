@@ -73,7 +73,7 @@
         },
         {
           title: 'Реализация проектов',
-          url: '/implementation-of-projects',
+          url: '/projects',
           icon: 'mdi-bulletin-board'
         },
         {

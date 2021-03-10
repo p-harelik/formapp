@@ -46,7 +46,6 @@ export default {
         switch (placementInfo.placement) {
           case 'CRM_DEAL_DETAIL_TOOLBAR': {
             const dealInfo = await Bitrix.callMethod('crm.deal.get', { id: placementInfo.options.ID })
-            console.log(dealInfo, 'Информация по сделке')
             commit('ADD_DEAL', {
               id: dealInfo.ID,
               title: dealInfo.TITLE,
@@ -61,10 +60,11 @@ export default {
             break
           }
           case 'SONET_GROUP_DETAIL_TAB': {
-            const iframeSizes = window.BX24.getScrollSize()
+            // const iframeSizes = window.BX24.getScrollSize()
+            // console.log(iframeSizes)
+            // window.BX24.resizeWindow(iframeSizes.scrollWidth + 35, iframeSizes.scrollHeight + 500, function () {
+            // })
             window.BX24.fitWindow(() => {
-              window.BX24.resizeWindow(iframeSizes.scrollWidth + 35, iframeSizes.scrollHeight + 500, function () {
-              })
             })
             const groupInfo = await Bitrix.callMethod('sonet_group.get', { FILTER: { ID: placementInfo.options.GROUP_ID } })
             console.log(groupInfo, 'Информация по проекту')
@@ -72,12 +72,32 @@ export default {
               id: groupInfo[0].ID,
               title: groupInfo[0].NAME
             })
+            window.BX24.openApplication({
+                opend: true,
+                project: {
+                  id: groupInfo[0].ID,
+                  title: groupInfo[0].NAME
+                },
+                bx24_leftBoundary: 40
+              },
+              function () {
+                console.log('Application closed!')
+              })
             break
+          }
+          default: {
+            if (placementInfo.options.project) {
+                const projectInfo = placementInfo.options.project
+              console.log(placementInfo.options.project, 'opt')
+              commit('ADD_GROUP', {
+                id: projectInfo.id,
+                title: projectInfo.title
+              })
+            }
           }
         }
         const user = await Bitrix.callMethod('user.current')
         const auth = window.BX24.getAuth()
-        console.log(user)
         commit('UPDATE_USER', {
           id: user.ID,
           email: user.EMAIL,

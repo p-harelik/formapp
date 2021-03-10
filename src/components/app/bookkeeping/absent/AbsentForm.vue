@@ -98,7 +98,7 @@
                 text
                 color="primary"
                 @click="$refs.menu.save(dates)"
-              >
+                >
                 OK
               </v-btn>
             </v-date-picker>
@@ -160,10 +160,6 @@
         {
           value: 125,
           text: 'Отгул за ранее отработанное время'
-        },
-        {
-          value: 929,
-          text: 'НЕОПЛАЧИВАЕМЫЙ отгул за свой счет'
         }
       ],
       description: null,
