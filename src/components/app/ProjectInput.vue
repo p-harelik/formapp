@@ -22,9 +22,9 @@
       prop: 'value',
       event: 'valueChange'
     },
-    props: {
-      value: [Object, null]
-    },
+    props: [
+      'value'
+    ],
     data: () => ({
       isProjectPlacement: false
     }),
@@ -40,6 +40,7 @@
       }
     },
     created () {
+      console.log(this, 'из поля проект')
       if (this.getGroup.id) {
         this.project = this.getGroup
         this.isProjectPlacement = true

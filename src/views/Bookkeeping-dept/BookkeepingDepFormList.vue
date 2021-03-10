@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <h1 class="ma-5 display-1">Бухгалтерия</h1>
+    <h1 class="ma-5 display-1">Бухгалтерия Полисервис</h1>
     <v-row dense>
       <v-col
         v-for="item in items"

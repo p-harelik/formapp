@@ -432,11 +432,13 @@
         this.atWhoseExpenseItems[0].label = `отправителя (${val.title || val})`
       },
       recipientCompany (val) {
-        this.recipientCompanyAddress = val.address.replace(/\|.*/, '')
+        this.recipientCompanyAddress = val?.address.replace(/\|.*/, '') ?? val
         this.atWhoseExpenseItems[1].label = `получателя (${val.title || val})`
       },
       deal (val) {
-        this.buyerOrder = val?.buyerOrder
+        console.log(val, 'val')
+        this.buyerOrder = val?.buyerOrder || ''
+        console.log(this.buyerOrder, 'buerd')
       }
     },
     methods: {

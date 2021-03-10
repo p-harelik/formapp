@@ -7,6 +7,7 @@ import sendDocs from './modules/logistics/sendDocs'
 import deliveryEquipment from './modules/logistics/deliveryEquipment'
 import workers from './modules/logistics/workers'
 import bookkeeping from './modules/bookkeeping/bookkeeping'
+import projects from './modules/projects/projects'
 
 Vue.use(Vuex)
 
@@ -18,6 +19,7 @@ export default new Vuex.Store({
     sendDocs,
     deliveryEquipment,
     workers,
-    bookkeeping
+    bookkeeping,
+    projects
   }
 })

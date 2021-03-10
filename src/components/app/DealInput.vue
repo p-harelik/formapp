@@ -18,7 +18,7 @@
         v-if="item.title"
         :href="`${item.id ? 'https://polyservice.bitrix24.ru/crm/deal/details/' + item.id +'/': ''}`"
         target="_blank"
-        @click.native.stop
+        @click.native.stop=""
       >
         {{item.title}}
       </v-chip>

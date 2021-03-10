@@ -11,6 +11,7 @@
             title="Inline Frame Example"
             width="100%"
             height="650"
+            frameborder="0"
             src="https://b24-gptytd.bitrix24.site/crm_form5/">
     </iframe>
 

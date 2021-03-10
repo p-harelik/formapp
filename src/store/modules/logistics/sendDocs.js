@@ -4,6 +4,7 @@ export default {
   actions: {
     async addSendDocsRequest (ctx, data) {
       try {
+        console.log(data, 'data')
         const files = await Bitrix.loadFiles(data.files)
         let observers = []
         if (data.observers) {
