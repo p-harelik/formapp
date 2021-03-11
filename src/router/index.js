@@ -66,6 +66,11 @@ const routes = [
     component: () => import('../views/Projects/ProjectsFormItem')
   },
   {
+    path: '/polyled',
+    name: 'Resources',
+    component: () => import('../views/Polyled')
+  },
+  {
     path: '/resources',
     name: 'Resources',
     component: () => import('../views/Resources.vue')
