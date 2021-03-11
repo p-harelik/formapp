@@ -75,19 +75,53 @@
           <v-card-text>
             <v-text-field
               v-model="project"
-              label="Полное наименование проекта (объекта)"
+              label="Полное наименование проекта (объекта) (необязательно)"
               hint="Без аббревиатур"
             ></v-text-field>
             <v-text-field
               v-model="customer"
-              label="Заказчик"
+              label="Заказчик (необязательно)"
               hint="Без аббревиатур"
             ></v-text-field>
             <v-text-field
               v-model="installationAddress"
-              label="Адрес инсталляции"
+              label="Адрес инсталляции (необязательно)"
               hint="Индекс, Населенный пункт, Улица, Дом"
             ></v-text-field>
+            <v-row>
+              <v-col
+                cols="12"
+                sm="6"
+                md="4"
+              >
+                <v-menu
+                  v-model="menu1"
+                  :close-on-content-click="false"
+                  :nudge-right="40"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="auto"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      v-model="implementationDateText"
+                      label="Дата реализации"
+                      prepend-icon="mdi-calendar"
+                      readonly
+                      v-bind="attrs"
+                      v-on="on"
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker
+                    v-model="implementationDate"
+                    :min="new Date().toISOString().substr(0, 10)"
+                    locale="ru"
+                    first-day-of-week="1"
+                    @input="menu = false"
+                  ></v-date-picker>
+                </v-menu>
+              </v-col>
+            </v-row>
             <v-radio-group
               v-model="whoseProject"
               column
@@ -176,6 +210,7 @@ export default {
     customer: '',
     installationAddress: '',
     implementationDate: '',
+    menu1: false,
     whoseProject: '',
     whoseProjectItems: [
       {
@@ -187,7 +222,12 @@ export default {
         label: 'Дилер'
       }
     ]
-  })
+  }),
+  computed: {
+    implementationDateText () {
+      return this.implementationDate.split('-').reverse().join('-')
+    }
+  }
 }
 </script>
 
