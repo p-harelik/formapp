@@ -136,7 +136,8 @@
               </v-row>
             </template>
           </template>
-          <ProjectInput v-model="project"/>
+<!--          <ProjectInput v-model="project"/>-->
+          <ProjectInputSync v-model="project"/>
           <v-text-field
             v-if="typeof project === 'string'"
             v-model="project"
@@ -163,13 +164,14 @@
 </template>
 
 <script>
-  import ProjectInput from '../../ProjectInput'
+  // import ProjectInput from '../../ProjectInput'
   import { required, requiredIf } from 'vuelidate/lib/validators'
   import { mapActions } from 'vuex'
+  import ProjectInputSync from '@/components/app/ProjectInputSync'
 
   export default {
     name: 'RequestResourceForm',
-    components: { ProjectInput },
+    components: { ProjectInputSync },
     validations: {
       project: { required },
       whatChecked: { required },
@@ -237,9 +239,7 @@
     }),
     computed: {
       whatChecked () {
-        console.log('ds')
-        console.log(this.resources.filter(item => item.isChecked === true), 'cheched')
-        return []
+        return this.resources.filter(item => item.isChecked === true)
       },
       trueResultText () {
         let resultText = ''
@@ -316,7 +316,6 @@
               break
             }
           }
-          alert('не валидна')
           return false
         } else {
           this.$v.$reset()
@@ -324,9 +323,11 @@
           const results = []
           for (const el of this.resources) {
             if (el.isChecked) {
+              console.log(this.project)
               const formData = {
                 resource: el,
-                project: this.project?.id || this.project
+                projectId: Number(this.project?.ID),
+                projectName: this.project?.NAME || this.project
               }
               switch (el.value) {
                 case 'iso': {

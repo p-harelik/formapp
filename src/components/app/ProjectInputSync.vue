@@ -1,14 +1,12 @@
 <template>
   <div>
     <v-autocomplete
+      v-model="projectValue"
       label="Проект"
       placeholder="Начните вводить название"
       :items="projectItems"
       item-text="NAME"
       hide-no-data
-      :menu-props="{
-        auto: true
-      }"
       :loading="isLoadingProject"
       :search-input.sync="searchProject"
       return-object
@@ -34,6 +32,7 @@
 
 <script>
 import Bitrix from '../../plugins/Bitrix'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'ProjectInputSync',
@@ -43,6 +42,7 @@ export default {
   },
   props: ['value'],
   data: () => ({
+    projectValue: null,
     projectItems: [],
     searchProject: null,
     isLoadingProject: false
@@ -132,6 +132,19 @@ export default {
       //   }
       // ]
       // this.isLoadingProject = false
+    }
+  },
+  computed: {
+    ...mapGetters(['getGroup'])
+  },
+  created () {
+    if (this.getGroup.id) {
+      this.projectValue = {
+        ID: this.getGroup.id,
+        NAME: this.getGroup.title
+      }
+      this.searchProject = this.getGroup.title
+      this.$emit('valueChange', this.projectValue)
     }
   }
 }

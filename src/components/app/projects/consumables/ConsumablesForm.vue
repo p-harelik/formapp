@@ -52,6 +52,7 @@
             v-model = consumables
             :items="consumblesList"
             label="Перечень расходных материалов"
+            hint="Перечислите требуемые расходные материалы"
             small-chips
             multiple
             deletable-chips
@@ -71,17 +72,6 @@
               :error-messages="countErrors(item)"
               @blur="item.count.$touch()"
             >
-              <template v-slot:append-outer>
-                <v-btn
-                  color="primary"
-                  depressed
-                  x-small
-                  fab
-                  @click="removeItem(Number(index))"
-                >
-                  x
-                </v-btn>
-              </template>
             </v-text-field>
             <p class="subtitle-1 font-weight-medium black--text mt-4 mb-4">Дополнительная информация</p>
             <v-textarea
@@ -229,9 +219,6 @@
         if (!el.count.$dirty) return errors
         !el.count.required && errors.push('Укажите требуемое количество (например: 1 шт.)')
         return errors
-      },
-      removeItem (index) {
-        this.consumables = this.consumables.filter((item, i) => i !== index)
       }
     }
   }

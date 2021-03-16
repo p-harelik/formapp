@@ -55,7 +55,7 @@ import ConsumablesForm from './ConsumablesForm'
     data () {
       return {
         tab: null,
-        title: 'Запрос ресурсов',
+        title: 'Запрос расходных материалов',
         tabsItem: [
           {
             id: 1,

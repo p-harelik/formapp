@@ -4,17 +4,20 @@ export default {
   actions: {
     async isoResourceRequest (ctx, data) {
       try {
+        console.log(data, 'iso')
         const resource = data.resource
         const params = {
           IBLOCK_TYPE_ID: 'lists_socnet',
-          IBLOCK_ID: '195',
+          SOCNET_GROUP_ID: 283,
+          IBLOCK_ID: 211,
           ELEMENT_CODE: Date.now(),
           FIELDS: {
             NAME: 'Запрос ресурсов ИСО',
-            PROPERTY_1503: resource.numberPeople, // количество чел
-            PROPERTY_1505: resource.dates[0], // дата с
-            PROPERTY_1507: resource.dates[1] || resource.dates[0], // дата по
-            PROPERTY_1509: data.project // ид проекта
+            PROPERTY_1561: resource.numberPeople, // количество чел
+            PROPERTY_1563: resource.dates[0], // дата с
+            PROPERTY_1565: resource.dates[1] || resource.dates[0], // дата по
+            PROPERTY_1567: data.projectId || 0, // ид проекта
+            PROPERTY_1569: data.projectName // название
           }
         }
         const res = await Bitrix.callMethod('lists.element.add', params)
@@ -31,18 +34,20 @@ export default {
     },
     async mtoResourceRequest (ctx, data) {
       try {
+        console.log(data, 'mto')
         const resource = data.resource
         const params = {
           IBLOCK_TYPE_ID: 'lists_socnet',
-          SOCNET_GROUP_ID: 1347,
-          IBLOCK_ID: '205',
+          SOCNET_GROUP_ID: 283,
+          IBLOCK_ID: '213',
           ELEMENT_CODE: Date.now(),
           FIELDS: {
             NAME: 'Запрос ресурсов МТО',
-            PROPERTY_1535: resource.numberPeople, // количество чел
-            PROPERTY_1537: resource.dates[0], // дата с
-            PROPERTY_1539: resource.dates[1] || resource.dates[0], // дата по
-            PROPERTY_1541: data.project // ид проекта
+            PROPERTY_1571: resource.numberPeople, // количество чел
+            PROPERTY_1573: resource.dates[0], // дата с
+            PROPERTY_1575: resource.dates[1] || resource.dates[0], // дата по
+            PROPERTY_1577: data.projectId || 0, // ид проекта
+            PROPERTY_1579: data.projectName // название
           }
         }
         const res = await Bitrix.callMethod('lists.element.add', params)
@@ -59,17 +64,20 @@ export default {
     },
     async programmersResourceRequest (ctx, data) {
       try {
+        console.log(data, 'prog')
         const resource = data.resource
         const params = {
           IBLOCK_TYPE_ID: 'lists_socnet',
-          IBLOCK_ID: '199',
+          SOCNET_GROUP_ID: 283,
+          IBLOCK_ID: '215',
           ELEMENT_CODE: Date.now(),
           FIELDS: {
             NAME: 'Запрос ресурсов Программисты',
-            PROPERTY_1511: resource.numberPeople, // количество чел
-            PROPERTY_1513: resource.dates[0], // дата с
-            PROPERTY_1515: resource.dates[1] || resource.dates[0], // дата по
-            PROPERTY_1517: data.project // ид проекта
+            PROPERTY_1581: resource.numberPeople, // количество чел
+            PROPERTY_1583: resource.dates[0], // дата с
+            PROPERTY_1585: resource.dates[1] || resource.dates[0], // дата по
+            PROPERTY_1587: data.projectId || 0, // ид проекта
+            PROPERTY_1589: data.projectName // название
           }
         }
         const res = await Bitrix.callMethod('lists.element.add', params)
@@ -86,18 +94,20 @@ export default {
     },
     async rpResourceRequest (ctx, data) {
       try {
+        console.log(data, 'rp')
         const resource = data.resource
         const params = {
           IBLOCK_TYPE_ID: 'lists_socnet',
-          SOCNET_GROUP_ID: 1345,
-          IBLOCK_ID: '201',
+          SOCNET_GROUP_ID: 283,
+          IBLOCK_ID: '217',
           ELEMENT_CODE: Date.now(),
           FIELDS: {
             NAME: 'Запрос ресурсов Программисты',
-            PROPERTY_1519: resource.numberPeople, // количество чел
-            PROPERTY_1521: resource.dates[0], // дата с
-            PROPERTY_1523: resource.dates[1] || resource.dates[0], // дата по
-            PROPERTY_1525: data.project // ид проекта
+            PROPERTY_1591: resource.numberPeople, // количество чел
+            PROPERTY_1593: resource.dates[0], // дата с
+            PROPERTY_1595: resource.dates[1] || resource.dates[0], // дата по
+            PROPERTY_1597: data.projectId || 0, // ид проекта
+            PROPERTY_1599: data.projectName // название
           }
         }
         const res = await Bitrix.callMethod('lists.element.add', params)
