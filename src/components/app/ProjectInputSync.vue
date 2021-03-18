@@ -10,6 +10,7 @@
       :loading="isLoadingProject"
       :search-input.sync="searchProject"
       return-object
+      :error-messages="errorMessages"
       @change="$emit('valueChange', $event)"
     >
       <template v-slot:item="data">
@@ -40,7 +41,10 @@ export default {
     prop: 'value',
     event: 'valueChange'
   },
-  props: ['value'],
+  props: {
+    value: [Object, String],
+    errorMessages: [Array]
+  },
   data: () => ({
     projectValue: null,
     projectItems: [],

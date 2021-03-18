@@ -70,6 +70,7 @@
               v-model="item.$model.count"
               :label="item.$model.text"
               :error-messages="countErrors(item)"
+              hint="Например: 1 шт / 5 метров / 1 пара ..."
               @blur="item.count.$touch()"
             >
             </v-text-field>
@@ -79,17 +80,42 @@
               label="Комментарий к заявке (необязательно)"
               auto-grow
             ></v-textarea>
-            <ProjectInput v-model="project"/>
-            <v-text-field
-              v-if="typeof project === 'string'"
-              v-model="project"
-              label="Название и номер проекта"
-              prepend-icon="mdi-file-cad"
-              hint="Например: AV 123456 Проект Москва"
-              :error-messages="projectErrors"
-              @blur="$v.project.$touch()"
-            ></v-text-field>
-            <DealInput v-model="deal"/>
+            <v-row>
+              <v-col
+                cols="12"
+                sm="6"
+                md="5"
+              >
+                <v-menu
+                  v-model="menu"
+                  :close-on-content-click="false"
+                  :nudge-right="40"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="auto"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      v-model="deliveryDateText"
+                      label="Дата поставки на объект"
+                      :error-messages="deliveryDateErrors"
+                      prepend-icon="mdi-calendar"
+                      readonly
+                      v-bind="attrs"
+                      v-on="on"
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker
+                    v-model="deliveryDate"
+                    :min="new Date().toISOString().substr(0, 10)"
+                    locale="ru"
+                    first-day-of-week="1"
+                    @input="menu = false"
+                  ></v-date-picker>
+                </v-menu>
+              </v-col>
+            </v-row>
+            <ProjectInputSync v-model="project" :error-messages="projectErrors"/>
           </template>
           <v-btn
             class="mr-4 mb-4"
@@ -108,13 +134,12 @@
 <script>
   import { consumables } from '../../../../mocks/consumablesList'
   import { required } from 'vuelidate/lib/validators'
-  import ProjectInput from '../../ProjectInput'
-  import DealInput from '../../DealInput'
   import { mapActions } from 'vuex'
+  import ProjectInputSync from '@/components/app/ProjectInputSync'
 
   export default {
     name: 'ConsumablesForm',
-    components: { DealInput, ProjectInput },
+    components: { ProjectInputSync },
     validations: {
       consumables: {
         required,
@@ -122,6 +147,7 @@
           count: { required }
         }
       },
+      deliveryDate: { required },
       project: { required }
     },
     data: () => ({
@@ -132,7 +158,8 @@
 
       project: '',
 
-      deal: null,
+      deliveryDate: '',
+      menu: false,
 
       loading: false,
       isValidationError: false,
@@ -144,10 +171,19 @@
       consumblesList () {
         return consumables
       },
+      deliveryDateText () {
+        return this.deliveryDate.split('-').reverse().join('-')
+      },
       consumablesErrors () {
         const errors = []
         if (!this.$v.consumables.$dirty) return errors
         !this.$v.consumables.required && errors.push('Укажите какой-нибудь расходник')
+        return errors
+      },
+      deliveryDateErrors () {
+        const errors = []
+        if (!this.$v.deliveryDate.$dirty) return errors
+        !this.$v.deliveryDate.required && errors.push('Укажите дату поставки на объект')
         return errors
       },
       projectErrors () {
@@ -203,8 +239,8 @@
           const formData = {
             consumables: this.consumables,
             description: this.description,
-            project: this.project?.title || this.project,
-            deal: this.deal
+            deliveryDate: this.deliveryDate,
+            project: this.project?.NAME || this.project
           }
           const result = await this.consumablesRequest(formData)
           this.loading = false

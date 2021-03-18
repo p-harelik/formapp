@@ -78,7 +78,7 @@
         },
         {
           title: 'Расчет PolyLED',
-          url: '/polyled',
+          url: '/polyled1',
           icon: 'mdi-monitor-multiple'
         },
         {

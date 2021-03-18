@@ -136,19 +136,7 @@
               </v-row>
             </template>
           </template>
-<!--          <ProjectInput v-model="project"/>-->
-          <ProjectInputSync v-model="project"/>
-          <v-text-field
-            v-if="typeof project === 'string'"
-            v-model="project"
-            type="number"
-            label="Идентификатор проекта (группы)"
-            prepend-icon="mdi-file-cad"
-            hint="Идентификатор можно посмотреть в url адресе проекта (группы) https://polyservice.bitrix24.ru/workgroups/group/1025/
-            ИД: 1025"
-            :error-messages="projectErrors"
-            @blur="$v.project.$touch()"
-          ></v-text-field>
+          <ProjectInputSync v-model="project" :error-messages="projectErrors"/>
           <v-btn
             class="mr-4 mb-4"
             color="primary"
@@ -164,7 +152,6 @@
 </template>
 
 <script>
-  // import ProjectInput from '../../ProjectInput'
   import { required, requiredIf } from 'vuelidate/lib/validators'
   import { mapActions } from 'vuex'
   import ProjectInputSync from '@/components/app/ProjectInputSync'
@@ -352,6 +339,9 @@
           console.log(results, 'results')
           this.loading = false
           this.result = results
+          this.resources.forEach(resource => {
+            resource.isChecked = false
+          })
         }
       }
     }

@@ -125,7 +125,7 @@ export default {
     async consumablesRequest (ctx, data) {
       try {
         const consumbles = data.consumables.map(item => {
-          return `${item.text}: ${item.count}`
+          return `${item.text}: ${item.count}.`
         }).join('\n')
         const params = {
           IBLOCK_TYPE_ID: 'lists_socnet',
@@ -133,11 +133,11 @@ export default {
           IBLOCK_ID: 207,
           ELEMENT_CODE: Date.now(),
           FIELDS: {
-            NAME: 'Запрос расходных материалов',
+            NAME: 'Запрос расходных материалов под проект',
             PREVIEW_TEXT: consumbles, // перечень расходных материалов
             DETAIL_TEXT: data.description, // комментарий
-            PROPERTY_1547: data.project, // номер и название проекта
-            PROPERTY_1549: data.deal?.id || '' // сделка
+            PROPERTY_1601: data.deliveryDate, // дата поставки на объект
+            PROPERTY_1547: data.project // номер и название проекта
           }
         }
         const res = await Bitrix.callMethod('lists.element.add', params)
