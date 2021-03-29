@@ -60,7 +60,7 @@
               target="_blank"
               @click.native.stop
             >
-              <v-avatar left v-if="item.logoURL">
+              <v-avatar left v-if="item.logoURL" size="56">
                 <img :src="'https://polyservice.bitrix24.ru/'+item.logoURL" alt="">
               </v-avatar>
               {{item.title || item}}
@@ -195,7 +195,10 @@
         ></v-select>
         <v-text-field
           v-model="buyerOrder"
-          label="Заказ покупателя (необязательно)"
+          label="Заказ покупателя"
+          ref="buyerOrder"
+          :error-messages="buyerOrderErrors"
+          @blur="$v.buyerOrder.$touch()"
         ></v-text-field>
         <v-textarea
           v-model.trim="description"
@@ -306,6 +309,7 @@
       recipientPerson: { required },
       recipientPersonPhone: { required },
       date: { required },
+      buyerOrder: { required },
       description: { required }
     },
 
@@ -340,24 +344,36 @@
       deliverySelect: 739,
       deliveryItems: [
         {
-          value: 729,
-          text: 'СДЭК'
-        },
-        {
           value: 731,
           text: 'Dostavista'
         },
         {
-          value: 733,
-          text: 'Яндекс.Такси'
+          value: 1023,
+          text: 'PonyExpress'
+        },
+        {
+          value: 1025,
+          text: 'Байкал Сервис'
+        },
+        {
+          value: 1021,
+          text: 'Деловые Линии'
+        },
+        {
+          value: 737,
+          text: 'Курьер Полимедиа'
         },
         {
           value: 735,
           text: 'Почта России'
         },
         {
-          value: 737,
-          text: 'Курьер Полимедиа'
+          value: 729,
+          text: 'СДЭК'
+        },
+        {
+          value: 733,
+          text: 'Яндекс.Такси'
         },
         {
           value: 739,
@@ -412,6 +428,12 @@
         const errors = []
         if (!this.$v.recipientPersonPhone.$dirty) return errors
         !this.$v.recipientPersonPhone.required && errors.push('Необходимо указать телефон получателя')
+        return errors
+      },
+      buyerOrderErrors () {
+        const errors = []
+        if (!this.$v.buyerOrder.$dirty) return errors
+        !this.$v.buyerOrder.required && errors.push('Необходимо указать заказ покупателя')
         return errors
       },
       dateErrors () {

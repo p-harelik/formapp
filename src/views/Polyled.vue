@@ -1,6 +1,43 @@
 <template>
   <div>
     <v-snackbar
+      v-model="successSnackbar"
+      :timeout="4000"
+      top
+      transition="scroll-y-transition"
+      color="success"
+    >
+      Заявка на закупку № {{result.elementId}} успешно создана!
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="white"
+          text
+          v-bind="attrs"
+          @click="successSnackbar = false"
+        >
+          ОК
+        </v-btn>
+      </template>
+    </v-snackbar>
+    <v-snackbar
+      v-model="errorSnackbar"
+      top
+      :timeout="-1"
+      color="error"
+    >
+      Ошибка ({{result}}) обратитесь к администратору!!!
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="white"
+          text
+          v-bind="attrs"
+          @click="errorSnackbar = false"
+        >
+          ОК
+        </v-btn>
+      </template>
+    </v-snackbar>
+    <v-snackbar
       color="error"
       v-model="isValidationError"
       top
@@ -35,6 +72,7 @@
         <v-stepper-step
           step="4">
           Дополнительная информация
+          <small>Необязательно</small>
         </v-stepper-step>
       </v-stepper-header>
       <v-stepper-items>
@@ -47,14 +85,8 @@
                   label="Название и номер проекта из 1С (+тип объекта)"
                   hint="Для идентификации внутри компании. Например, Мультифункциональный зал_Альфабанк AV190493."
                   :error-messages="projectNameErrors"
+                  autofocus
                   @blur="$v.step1Fields.projectName.$touch()"
-                ></v-text-field>
-                <v-text-field
-                  v-model="step1Fields.gip"
-                  label="Кто составил? (ГИП) "
-                  hint="Пример: Матов Ю.В."
-                  :error-messages="gipErrors"
-                  @blur="$v.step1Fields.gip.$touch()"
                 ></v-text-field>
                 <v-text-field
                   v-model="step1Fields.projectManager"
@@ -88,6 +120,7 @@
                   v-model="step2Fields.fullProjectName"
                   label="Полное наименование проекта (объекта)"
                   hint="Без аббревиатур"
+                  autofocus
                   :error-messages="fullProjectNameErrors"
                   @blur="$v.step2Fields.fullProjectName.$touch()"
                 ></v-text-field>
@@ -151,7 +184,7 @@
                     v-for="n in step2Fields.whoseProjectItems"
                     :key="n.value"
                     :label="n.label"
-                    :value="n.label"
+                    :value="n.value"
                   >
                   </v-radio>
                 </v-radio-group>
@@ -175,7 +208,8 @@
                   <label class="v-label theme--light text-14"> Ширина (в метрах)
                     <v-row class="mt-0 pt-0">
                       <v-col
-                        sm="3"
+                        sm="6"
+                        md="3"
                         class="mt-0 pt-0"
                       >
                         <v-select
@@ -184,12 +218,16 @@
                         ></v-select>
                       </v-col>
                       <v-col
+                        sm="6"
+                        md="3"
                         class="mt-0 pt-0"
                       >
                         <v-text-field
                           v-model="step3Fields.width.item"
                           hint="В метрах"
                           type="number"
+                          autofocus
+                          suffix="м"
                           :error-messages="widthItemErrors"
                           @blur="$v.step3Fields.width.item.$touch()"
                         ></v-text-field>
@@ -201,7 +239,9 @@
                   <label class="v-label theme--light text-14"> Высота (в метрах)
                     <v-row class="mt-0 pt-0">
                       <v-col
-                        sm="3"
+                        xs="6"
+                        sm="6"
+                        md="3"
                         class="mt-0 pt-0"
                       >
                         <v-select
@@ -210,12 +250,16 @@
                         ></v-select>
                       </v-col>
                       <v-col
+                        xs="6"
+                        sm="6"
+                        md="3"
                         class="mt-0 pt-0"
                       >
                         <v-text-field
                           v-model="step3Fields.height.item"
                           type="number"
                           hint="В метрах"
+                          suffix="м"
                           :error-messages="heightItemErrors"
                           @blur="$v.step3Fields.height.item.$touch()"
                         ></v-text-field>
@@ -223,13 +267,22 @@
                     </v-row>
                   </label>
                 </div>
-                <v-text-field
-                  label="Шаг пикселя (в милиметрах)"
-                  v-model="step3Fields.pixelPitch"
-                  type="number"
-                  :error-messages="pixelPitchErrors"
-                  @blur="$v.step3Fields.pixelPitch.$touch()"
-                ></v-text-field>
+                <v-row class="mt-0 pt-0">
+                  <v-col
+                    xs="12"
+                    md="6"
+                    class="mt-0 pt-0"
+                  >
+                    <v-text-field
+                      label="Шаг пикселя (в милиметрах)"
+                      v-model="step3Fields.pixelPitch"
+                      type="number"
+                      suffix="мм"
+                      :error-messages="pixelPitchErrors"
+                      @blur="$v.step3Fields.pixelPitch.$touch()"
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
                 <v-select
                   v-model="step3Fields.installationSite"
                   :items="step3Fields.installationSiteItems"
@@ -259,9 +312,9 @@
                   <v-checkbox
                     v-for="formFactorItem of step3Fields.formFactorItems"
                     v-model="step3Fields.formFactor"
-                    :key="formFactorItem"
-                    :label="formFactorItem"
-                    :value="formFactorItem"
+                    :key="formFactorItem.value"
+                    :label="formFactorItem.label"
+                    :value="formFactorItem.value"
                     class="my-0 py-0"
                     :error="$v.step3Fields.formFactor.$invalid && $v.step3Fields.formFactor.$dirty"
                     @change="$v.step3Fields.formFactor.$touch()"
@@ -284,9 +337,9 @@
                   <v-checkbox
                     v-for="item of step3Fields.priceCategoryItems"
                     v-model="step3Fields.priceCategory"
-                    :key="item"
-                    :label="item"
-                    :value="item"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
                     class="my-0 py-0"
                     :error="$v.step3Fields.priceCategory.$invalid && $v.step3Fields.priceCategory.$dirty"
                     @change="$v.step3Fields.priceCategory.$touch()"
@@ -329,27 +382,13 @@
                     Тип крепления
                   </label>
                   <v-checkbox
-                    v-model="mountType"
-                    label="Настенный"
-                    value="Настенный"
-                  ></v-checkbox>
-                  <v-checkbox
-                    v-model="mountType"
-                    label="Напольный"
-                    value="Напольный"
+                    v-for="(item, index) of step4Fields.mountTypeItems"
+                    v-model="step4Fields.mountType"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
                     class="my-0 py-0"
-                  ></v-checkbox>
-                  <v-checkbox
-                    v-model="mountType"
-                    label="Подвесной"
-                    value="Подвесной"
-                    class="my-0 py-0"
-                  ></v-checkbox>
-                  <v-checkbox
-                    v-model="mountType"
-                    label="Распорная конструкция"
-                    value="Распорная конструкция"
-                    class="my-0 py-0"
+                    :class="[ index === 0 ? 'mt-4': '']"
                   ></v-checkbox>
                 </div>
                 <div class="v-text-field__slot mt-4">
@@ -357,78 +396,68 @@
                     Тип демонстрируемого контента
                   </label>
                   <v-checkbox
-                    v-model="typeOfContentShow"
-                    label="Реклама"
-                    value="Реклама"
-                  ></v-checkbox>
-                  <v-checkbox
-                    v-model="typeOfContentShow"
-                    label="Текст"
-                    value="Текст"
+                    v-for="(item, index) of step4Fields.typeOfContentShowItems"
+                    v-model="step4Fields.typeOfContentShow"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
                     class="my-0 py-0"
-                  ></v-checkbox>
-                  <v-checkbox
-                    v-model="typeOfContentShow"
-                    label="Фото"
-                    value="Фото"
-                    class="my-0 py-0"
-                  ></v-checkbox>
-                  <v-checkbox
-                    v-model="typeOfContentShow"
-                    label="Карты"
-                    value="Карты"
-                    class="my-0 py-0"
-                  ></v-checkbox>
-                  <v-checkbox
-                    v-model="typeOfContentShow"
-                    label="Презентации"
-                    value="Презентации"
-                    class="my-0 py-0"
-                  ></v-checkbox>
-                  <v-checkbox
-                    v-model="typeOfContentShow"
-                    label="Видео"
-                    value="Видео"
-                    class="my-0 py-0"
+                    :class="[ index === 0 ? 'mt-4': '']"
                   ></v-checkbox>
                 </div>
                 <v-radio-group
                   label="Расстояние от экрана до серверной/аппаратной"
-                  v-model="distanceFromScreenToServer"
+                  v-model="step4Fields.distanceFromScreenToServer"
                 >
                   <v-radio
-                    label="До 20 м"
-                    value="До 20 м"
-                  ></v-radio>
-                  <v-radio
-                    label="20-100 м"
-                    value="20-100 м"
-                  ></v-radio>
-                  <v-radio
-                    label="Более 100 м"
-                    value="Более 100 м"
-                  ></v-radio>
-                  <v-radio
-                    label="Не знаю"
-                    value="Не знаю"
+                    v-for="item of step4Fields.distanceFromScreenToServerItems"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
                   ></v-radio>
                 </v-radio-group>
-                <v-text-field
-                  label="Минимальная яркость"
-                  v-model="minBrightness"
-                ></v-text-field>
-                <v-text-field
-                  label="Максимальный вес экрана или кабинета (кг)"
-                  v-model="weightLimit"
-                  type="number"
-                ></v-text-field>
-                <v-text-field
-                  label="Максимальное энергопотребление экрана или за 1м2(Ватт)"
-                  v-model="maxPowerConsumption"
-                ></v-text-field>
+                <v-row class="mt-0 pt-0">
+                  <v-col
+                    xs="12"
+                    md="6"
+                    class="mt-0 pt-0"
+                  >
+                    <v-text-field
+                      label="Минимальная яркость"
+                      v-model="step4Fields.minBrightness"
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+                <v-row class="mt-0 pt-0">
+                  <v-col
+                    xs="12"
+                    md="6"
+                    class="mt-0 pt-0"
+                  >
+                    <v-text-field
+                      label="Максимальный вес экрана или кабинета (кг)"
+                      v-model="step4Fields.weightLimit"
+                      type="number"
+                      suffix="кг"
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+                <v-row class="mt-0 pt-0">
+                  <v-col
+                    xs="12"
+                    md="6"
+                    class="mt-0 pt-0"
+                  >
+                    <v-text-field
+                      label="Максимальное энергопотребление экрана за 1м2(Ватт)"
+                      v-model="step4Fields.maxPowerConsumption"
+                      suffix="Ватт"
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
                 <v-radio-group
                   label="Требуемое разрешение экрана"
-                  v-model="screenResolution"
+                  v-model="step4Fields.screenResolution"
                 >
                   <v-radio
                     label="Full HD (1920x1080) 16:9"
@@ -449,7 +478,7 @@
                 </v-radio-group>
                 <v-radio-group
                   label="Частота обновления (Гц)"
-                  v-model="updateFrequency  "
+                  v-model="step4Fields.updateFrequency  "
                 >
                   <v-radio
                     label="1920 Гц"
@@ -465,10 +494,27 @@
                   ></v-radio>
                 </v-radio-group>
                 <v-textarea
-                  v-model.trim="additionalRequirements"
+                  v-model.trim="step4Fields.additionalRequirements"
                   label="Дополнительные требования"
                   auto-grow
                 ></v-textarea>
+                <v-file-input
+                  v-model="step4Fields.files"
+                  label="Документы (необязательно)"
+                  multiple
+                  counter
+                  prepend-icon="mdi-paperclip"
+                >
+                  <template v-slot:selection="{ text }">
+                    <v-chip
+                      small
+                      label
+                      color="primary"
+                    >
+                      {{ text }}
+                    </v-chip>
+                  </template>
+                </v-file-input>
                 <v-btn
                   color="primary"
                   @click="send()"
@@ -493,22 +539,25 @@
 
 <script>
 import { required, requiredIf } from 'vuelidate/lib/validators'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'Polyled',
   data: () => ({
     currentStep: 1,
     isValidationError: false,
+    successSnackbar: false,
+    errorSnackbar: false,
+    loading: false,
+    result: '',
 
     step1Fields: {
       projectName: '',
-      gip: '',
       projectManager: '',
       isRegistrationRequired: false
     },
-
     step2Fields: {
-      project: null,
+      fullProjectName: null,
       customer: '',
       installationAddress: '',
       implementationDate: '',
@@ -516,14 +565,15 @@ export default {
       whoseProject: '',
       whoseProjectItems: [
         {
-          label: 'Полимедиа'
+          label: 'Полимедиа',
+          value: 937
         },
         {
-          label: 'Дилер'
+          label: 'Дилер',
+          value: 939
         }
       ]
     },
-
     step3Fields: {
       accuracyItems: [
         'Не более',
@@ -542,58 +592,78 @@ export default {
       pixelPitch: '',
       installationSite: '',
       installationSiteItems: [
-        'Indoor',
-        'Outdoor',
-        'Any'
+        { text: 'Indoor', value: 941 },
+        { text: 'Outdoor', value: 943 },
+        { text: 'Any', value: 945 }
       ],
       typeOfUse: '',
       typeOfUseItems: [
-        'Fixed',
-        'Rental',
-        'Any'
+        { text: 'Fixed', value: 947 },
+        { text: 'Rental', value: 949 },
+        { text: 'Any', value: 951 }
       ],
       formFactor: [],
       formFactorItems: [
-        'Standard',
-        'Standard 16:9',
-        'Mediafacade',
-        'Floor',
-        'Custom form',
-        'Flex',
-        'Прозрачный',
-        'Any'
+        { label: 'Standard', value: 953 },
+        { label: 'Standard 16:9', value: 955 },
+        { label: 'Mediafacade', value: 957 },
+        { label: 'Floor', value: 959 },
+        { label: 'Custom form', value: 961 },
+        { label: 'Flex', value: 963 },
+        { label: 'Прозрачный', value: 965 },
+        { label: 'Any', value: 967 }
       ],
       typeOfServices: '',
       typeOfServicesItems: [
-        'Front',
-        'Back',
-        'Any'
+        { text: 'Front', value: 969 },
+        { text: 'Back', value: 971 },
+        { text: 'Any', value: 973 }
       ],
       priceCategory: [],
       priceCategoryItems: [
-        '$$$ (Leyard, Unilumin, Absen)',
-        '$$ (Lightking, LAMP, Qstech)',
-        '$ (AET, Priva)',
-        '0-$ (LEDsi, NoName)'
+        { label: '$$$ (Leyard, Unilumin, Absen)', value: 975 },
+        { label: '$$ (Lightking, LAMP, Qstech)', value: 977 },
+        { label: '$ (AET, Priva)', value: 979 },
+        { label: '0-$ (LEDsi, NoName)', value: 981 }
       ],
       isAddAdditionalInfo: false
     },
-
-    mountType: [],
-    typeOfContentShow: [],
-    distanceFromScreenToServer: '',
-    minBrightness: '',
-    weightLimit: '',
-    maxPowerConsumption: '',
-    screenResolution: '',
-    updateFrequency: '',
-    additionalRequirements: ''
-
+    step4Fields: {
+      mountType: [],
+      mountTypeItems: [
+        { label: 'Настенный', value: 983 },
+        { label: 'Напольный', value: 985 },
+        { label: 'Подвесной', value: 987 },
+        { label: 'Распорная конструкция', value: 989 }
+      ],
+      typeOfContentShow: [],
+      typeOfContentShowItems: [
+        { label: 'Реклама', value: 991 },
+        { label: 'Текст', value: 993 },
+        { label: 'Фото', value: 995 },
+        { label: 'Карты', value: 997 },
+        { label: 'Презентации', value: 999 },
+        { label: 'Видео', value: 1001 }
+      ],
+      distanceFromScreenToServer: '',
+      distanceFromScreenToServerItems: [
+        { label: 'До 20 м', value: 1003 },
+        { label: '20-100 м', value: 1005 },
+        { label: 'Более 100 м', value: 1007 },
+        { label: 'Не знаю', value: 1009 }
+      ],
+      minBrightness: '',
+      weightLimit: '',
+      maxPowerConsumption: '',
+      screenResolution: '',
+      updateFrequency: '',
+      additionalRequirements: '',
+      files: []
+    }
   }),
   validations: {
     step1Fields: {
       projectName: { required },
-      gip: { required },
       projectManager: { required }
     },
     step2Fields: {
@@ -635,6 +705,8 @@ export default {
 
   },
   computed: {
+    ...mapGetters(['getGroup']),
+
     implementationDateText() {
       return this.step2Fields.implementationDate.split('-').reverse().join('-')
     },
@@ -642,12 +714,6 @@ export default {
       const errors = []
       if (!this.$v.step1Fields.projectName.$dirty) return errors
       !this.$v.step1Fields.projectName.required && errors.push('Укажите название проекта')
-      return errors
-    },
-    gipErrors() {
-      const errors = []
-      if (!this.$v.step1Fields.gip.$dirty) return errors
-      !this.$v.step1Fields.gip.required && errors.push('Укажите ГИП')
       return errors
     },
     projectManagerErrors() {
@@ -740,6 +806,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['addPolyledRequest']),
     async send() {
       this.$v.$touch()
       console.log(this.$v)
@@ -747,7 +814,47 @@ export default {
         this.isValidationError = true
         return
       }
-      console.log('Форма отправлена')
+      this.$v.$reset()
+      this.loading = true
+      const formData = {
+        projectName: this.step1Fields.projectName,
+        projectManager: this.step1Fields.projectManager,
+        isRegistrationRequired: this.step1Fields.isRegistrationRequired,
+        fullProjectName: this.step2Fields.fullProjectName,
+        customer: this.step2Fields.customer,
+        installationAddress: this.step2Fields.installationAddress,
+        implementationDate: this.step2Fields.implementationDate,
+        whoseProject: this.step2Fields.whoseProject,
+        width: this.step3Fields.width,
+        height: this.step3Fields.height,
+        pixelPitch: this.step3Fields.pixelPitch,
+        installationSite: this.step3Fields.installationSite,
+        typeOfUse: this.step3Fields.typeOfUse,
+        formFactor: this.step3Fields.formFactor,
+        typeOfServices: this.step3Fields.typeOfServices,
+        priceCategory: this.step3Fields.priceCategory,
+        mountType: this.step4Fields.mountType,
+        typeOfContentShow: this.step4Fields.typeOfContentShow,
+        distanceFromScreenToServer: this.step4Fields.distanceFromScreenToServer,
+        minBrightness: this.step4Fields.minBrightness,
+        weightLimit: this.step4Fields.weightLimit,
+        maxPowerConsumption: this.step4Fields.maxPowerConsumption,
+        screenResolution: this.step4Fields.screenResolution,
+        updateFrequency: this.step4Fields.updateFrequency,
+        additionalRequirements: this.step4Fields.additionalRequirements,
+        files: this.step4Fields.files
+      }
+      const result = await this.addPolyledRequest(formData)
+      this.loading = false
+      this.result = result
+      if (result.elementId) {
+        this.successSnackbar = true
+        this.currentStep = 1
+        this.step1Fields.projectName = this.step1Fields.gip = this.step1Fields.projectManager = ''
+        this.step1Fields.isRegistrationRequired = false
+      } else {
+        this.errorSnackbar = true
+      }
     },
     nextStep() {
       let isInvalid = false
@@ -774,6 +881,11 @@ export default {
         }
         this.$v.$reset()
       }
+    }
+  },
+  created() {
+    if (this.getGroup.id) {
+      this.step1Fields.projectName = this.step2Fields.fullProjectName = this.getGroup.title
     }
   }
 }

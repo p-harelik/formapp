@@ -6,7 +6,6 @@
   import MainLayout from './layouts/MainLayout'
   import TestLayout from './layouts/TestLayout'
   import { mapActions } from 'vuex'
-  import Bitrix from './plugins/Bitrix'
 
   export default {
     computed: {
@@ -22,7 +21,6 @@
     },
     mounted () {
       this.placementInfo()
-      Bitrix.сurrentUser().then(res => console.log(res))
     }
   }
 </script>

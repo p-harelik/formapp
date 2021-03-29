@@ -80,12 +80,12 @@
           title: 'Расчет PolyLED',
           url: '/polyled',
           icon: 'mdi-monitor-multiple'
-        },
-        {
-          title: 'Расчет PolyWall',
-          url: '/polywall',
-          icon: 'mdi-tablet-dashboard'
         }
+        // {
+        //   title: 'Расчет PolyWall',
+        //   url: '/polywall',
+        //   icon: 'mdi-tablet-dashboard'
+        // }
       ]
     }),
     methods: {

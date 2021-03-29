@@ -235,8 +235,10 @@
         ></v-select>
         <v-text-field
           v-model="buyerOrder"
-          clearable
-          label="Заказ покупателя с которого будет оплачиваться доставка (необязательно)"
+          label="Заказ покупателя с которого будет оплачиваться доставка"
+          ref="buyerOrder"
+          :error-messages="buyerOrderErrors"
+          @blur="$v.buyerOrder.$touch()"
         ></v-text-field>
         <v-row>
           <v-col class="py-0">
@@ -447,6 +449,7 @@
       recipientCompanyAddress: { required },
       recipientPerson: { required },
       recipientPersonPhone: { required },
+      buyerOrder: { required },
       date: { required },
       length: { required, decimal, minValue: minValue(0.1) },
       width: { required, decimal, minValue: minValue(0.1) },
@@ -489,32 +492,44 @@
       deliverySelect: 831,
       deliveryItems: [
         {
-          value: 821,
-          text: 'СДЭК'
-        },
-        {
           value: 823,
           text: 'Dostavista'
         },
         {
-          value: 825,
-          text: 'Яндекс.Такси'
+          value: 1031,
+          text: 'PonyExpress'
         },
         {
-          value: 827,
-          text: 'Почта России'
+          value: 1029,
+          text: 'Байкал Сервис'
+        },
+        {
+          value: 925,
+          text: 'ГрузовичкоФ'
+        },
+        {
+          value: 1027,
+          text: 'Деловые Линии'
         },
         {
           value: 829,
           text: 'Курьер Polymedia'
         },
         {
+          value: 827,
+          text: 'Почта России'
+        },
+        {
+          value: 821,
+          text: 'СДЭК'
+        },
+        {
           value: 923,
           text: 'Транспортный отдел Polymedia'
         },
         {
-          value: 925,
-          text: 'ГрузовичкоФ'
+          value: 825,
+          text: 'Яндекс.Такси'
         },
         {
           value: 831,
@@ -599,6 +614,12 @@
         const errors = []
         if (!this.$v.recipientPersonPhone.$dirty) return errors
         !this.$v.recipientPersonPhone.required && errors.push('Необходимо указать телефон получателя')
+        return errors
+      },
+      buyerOrderErrors () {
+        const errors = []
+        if (!this.$v.buyerOrder.$dirty) return errors
+        !this.$v.buyerOrder.required && errors.push('Необходимо указать заказ покупателя')
         return errors
       },
       dateErrors () {

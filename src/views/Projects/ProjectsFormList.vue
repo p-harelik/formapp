@@ -11,7 +11,7 @@
         md="4"
       >
         <v-card
-          :to="{name: 'ProjectsFormItem', params: { formid:item.url, title:item.title }}"
+          :to="item.url !== 'business-trip' ? {name: 'ProjectsFormItem', params: { formid:item.url, title:item.title }} : {name: 'BookkeepingFormItem', params: { formid:item.url, title:item.title }}"
           :title="item.title"
           hover
           height="100%"
@@ -47,6 +47,11 @@
           title: 'Расходные материалы',
           url: 'consumables',
           img: './img/consumer-research.svg'
+        },
+        {
+          title: 'Оформление командировки',
+          url: 'business-trip',
+          img: './img/business-trip.svg'
         }
       ]
     })
