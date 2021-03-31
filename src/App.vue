@@ -17,10 +17,11 @@
       MainLayout, TestLayout
     },
     methods: {
-      ...mapActions(['placementInfo'])
+      ...mapActions(['placementInfo', 'getProjects'])
     },
     mounted () {
       this.placementInfo()
+      this.getProjects()
     }
   }
 </script>

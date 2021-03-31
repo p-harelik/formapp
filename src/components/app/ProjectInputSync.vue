@@ -139,9 +139,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['getGroup'])
+    ...mapGetters(['getGroup', 'getAllAvailableProjects'])
   },
   created () {
+    this.projectItems = this.getAllAvailableProjects
     if (this.getGroup.id) {
       this.projectValue = {
         ID: this.getGroup.id,

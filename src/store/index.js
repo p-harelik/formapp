@@ -9,6 +9,7 @@ import workers from './modules/logistics/workers'
 import bookkeeping from './modules/bookkeeping/bookkeeping'
 import projects from './modules/projects/projects'
 import polyled from './modules/polyled'
+import bitrixData from '@/store/modules/bitrixData'
 
 Vue.use(Vuex)
 
@@ -22,6 +23,7 @@ export default new Vuex.Store({
     workers,
     bookkeeping,
     projects,
-    polyled
+    polyled,
+    bitrixData
   }
 })
