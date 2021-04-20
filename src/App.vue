@@ -17,11 +17,20 @@
       MainLayout, TestLayout
     },
     methods: {
-      ...mapActions(['placementInfo', 'getProjects'])
+      ...mapActions([
+        'placementInfo',
+        'getProjects',
+        'GET_DEALS',
+        'GET_COMPANIES',
+        'GET_BITRIX_USERS'
+      ])
     },
     mounted () {
       this.placementInfo()
       this.getProjects()
+      this.GET_DEALS()
+      this.GET_COMPANIES()
+      this.GET_BITRIX_USERS()
     }
   }
 </script>

@@ -37,145 +37,164 @@
         </v-btn>
       </template>
     </v-snackbar>
+    <v-snackbar
+      color="error"
+      v-model="isValidationError"
+      top
+      right
+    >
+      Ошибка валидации формы, проверьте поля
+    </v-snackbar>
     <div class="wrapper-form">
-      <form @submit.prevent>
-        <p class="subtitle-1 font-weight-medium black--text mt-4 mb-4">Информация по отправителю</p>
-        <v-combobox
-          v-model="senderCompany"
-          label="Компания отправитель"
-          :items="companyItems"
-          item-text="title"
-          :loading="isLoadingCompany"
-          :search-input.sync="searchCompany"
-          :error-messages="senderCompanyErrors"
-          ref="senderCompany"
-          chips
-          clearable
-          @input="$v.senderCompany.$touch()"
-          @blur="$v.senderCompany.$touch()"
+      <form @submit.prevent >
+        <p class="title font-weight-medium black--text mt-4 mb-4">Параметры оборудования</p>
+        <div>
+          <p>Габариты и вес</p>
+              <v-row>
+                <v-col
+                >
+                  <v-select
+                    label="Ед. измерения"
+                    :items="unitItems"
+                    v-model="unitSelect"
+                  ></v-select>
+                </v-col>
+                <v-col
+                >
+                  <v-text-field
+                    v-model="length"
+                    label="Длина"
+                    error-count="2"
+                    ref="length"
+                    :error-messages="lengthErrors"
+                    @input="$v.length.$touch()"
+                    @blur="$v.length.$touch()"
+                  >
+                    <template v-slot:append-outer>
+                      x
+                    </template>
+                  </v-text-field>
+                </v-col>
+                <v-col
+                >
+                  <v-text-field
+                    v-model="width"
+                    label="Ширина"
+                    ref="width"
+                    :error-messages="widthErrors"
+                    @input="$v.width.$touch()"
+                    @blur="$v.width.$touch()"
+                  >
+                    <template v-slot:append-outer>
+                      x
+                    </template>
+                  </v-text-field>
+                </v-col>
+                <v-col
+                >
+                  <v-text-field
+                    v-model="height"
+                    label="Высота"
+                    ref="height"
+                    :error-messages="heightErrors"
+                    @input="$v.height.$touch()"
+                    @blur="$v.height.$touch()"
+                  ></v-text-field>
+                </v-col>
+                <v-col
+                >
+                  <v-text-field
+                    v-model="weight"
+                    label="Вес"
+                    suffix="кг"
+                    ref="weight"
+                    :error-messages="weightErrors"
+                    @input="$v.weight.$touch()"
+                    @blur="$v.weight.$touch()"
+                  >
+                  </v-text-field>
+                </v-col>
+              </v-row>
+        </div>
+        <v-textarea
+          v-model.trim="description"
+          :error-messages="descriptionErrors"
+          ref="description"
+          label="Описание оборудования"
+          placeholder="Укажите наименования перевозимого обородования"
+          auto-grow
+          rows="3"
+          @input="$v.description.$touch()"
+          @blur="$v.description.$touch()"
+        ></v-textarea>
+        <v-file-input
+          v-model="files"
+          multiple
+          id="test_file_input"
+          label="Добавить фото (документы)"
+          counter
+          prepend-icon="mdi-paperclip"
         >
-          <template v-slot:selection="{ item }">
+          <template v-slot:selection="{ text }">
             <v-chip
-              :href="`${item.id ? 'https://polyservice.bitrix24.ru/crm/company/details/' + item.id +'/': ''}`"
-              target="_blank"
-              @click.native.stop
+              small
+              label
+              color="primary"
             >
-              <v-avatar left v-if="item.logoURL">
-                <img :src="'https://polyservice.bitrix24.ru/'+item.logoURL" alt="">
-              </v-avatar>
-              {{item.title || item}}
+              {{ text }}
             </v-chip>
           </template>
-        </v-combobox>
+        </v-file-input>
+        <p class="title font-weight-medium black--text mt-4 mb-4">Данные отправителя</p>
+        <CompanyInputSync
+          v-model="sender.companyInfo"
+          label="Компания отправитель"
+          :error-messages="senderCompanyErrors"
+          :blur="$v.sender.companyInfo.title.$touch"
+        />
+        <ContactInputSync
+          :company-id="sender.companyInfo.id"
+          :contact-name="sender.contactName"
+          :contact-phone="sender.phoneNumber"
+          @contact-changed="updateSenderName"
+          @phone-changed="updateSenderPhone"
+          :contact-name-errors="senderContactNameErrors"
+          :contact-phone-errors="senderContactPhoneErrors"
+        />
         <v-text-field
-          v-model="senderAddress"
+          v-model="sender.companyInfo.address"
           label="Адрес отправителя"
           ref="senderAddress"
           prepend-icon="mdi-map-marker"
           :error-messages="senderAddressErrors"
-          @input="$v.senderAddress.$touch()"
-          @blur="$v.senderAddress.$touch()"
+          @blur="$v.sender.companyInfo.address.$touch"
         ></v-text-field>
-        <v-row>
-          <v-col
-            cols="12"
-            xs="12"
-            sm="6"
-          >
-            <v-text-field
-              v-model="senderPerson"
-              label="Контактное лицо"
-              prepend-icon="mdi-account"
-              ref="senderPerson"
-              :error-messages="senderPersonErrors"
-              @input="$v.senderPerson.$touch()"
-              @blur="$v.senderPerson.$touch()"
-            >
-            </v-text-field>
-          </v-col>
-          <v-col
-          >
-            <v-text-field
-              v-model="senderPersonPhone"
-              label="Телефон"
-              ref="senderPersonPhone"
-              prepend-icon="mdi-phone"
-              :error-messages="senderPersonPhoneErrors"
-              @input="$v.senderPersonPhone.$touch()"
-              @blur="$v.senderPersonPhone.$touch()"
-            >
-            </v-text-field>
-          </v-col>
-        </v-row>
-        <p class="subtitle-1 font-weight-medium black--text mt-4 mb-4">Информация по получателю</p>
-        <v-combobox
-          v-model="recipientCompany"
+        <p class="title font-weight-medium black--text mt-4 mb-4">Данные получателя</p>
+        <CompanyInputSync
+          v-model="recipient.companyInfo"
           label="Компания получатель"
-          :items="companyItems"
-          item-text="title"
-          :loading="isLoadingCompany"
-          :search-input.sync="searchCompany"
           :error-messages="recipientCompanyErrors"
           ref="recipientCompany"
-          chips
-          clearable
-          @input="$v.recipientCompany.$touch()"
-          @blur="$v.recipientCompany.$touch()"
-        >
-          <template v-slot:selection="{ item }">
-            <v-chip
-              :href="`${item.id ? 'https://polyservice.bitrix24.ru/crm/company/details/' + item.id +'/': ''}`"
-              target="_blank"
-              @click.native.stop
-            >
-              <v-avatar left v-if="item.logoURL">
-                <img :src="'https://polyservice.bitrix24.ru/'+item.logoURL" alt="">
-              </v-avatar>
-              {{item.title || item}}
-            </v-chip>
-          </template>
-        </v-combobox>
+        />
+        <ContactInputSync
+          :company-id="recipient.companyInfo.id"
+          :contact-name="recipient.contactName"
+          :contact-phone="recipient.phoneNumber"
+          @contact-changed="updateRecipientName"
+          @phone-changed="updateRecipientPhone"
+          :contact-name-errors="recipientContactNameErrors"
+          :contact-phone-errors="recipientContactPhoneErrors"
+        />
         <v-text-field
-          v-model="recipientCompanyAddress"
+          v-model="recipient.companyInfo.address"
           label="Адрес получателя"
           ref="recipientCompanyAddress"
           prepend-icon="mdi-map-marker"
           :error-messages="recipientCompanyAddressErrors"
-          @input="$v.recipientCompanyAddress.$touch()"
-          @blur="$v.recipientCompanyAddress.$touch()"
+          @input="$v.recipient.companyInfo.address.$touch"
+          @blur="$v.recipient.companyInfo.address.$touch"
         ></v-text-field>
-        <v-row>
-          <v-col
-            cols="12"
-            xs="12"
-            sm="6"
-          >
-            <v-text-field
-              v-model="recipientPerson"
-              label="Контактное лицо"
-              prepend-icon="mdi-account"
-              ref="recipientPerson"
-              :error-messages="recipientPersonErrors"
-              @input="$v.recipientPerson.$touch()"
-              @blur="$v.recipientPerson.$touch()"
-            >
-            </v-text-field>
-          </v-col>
-          <v-col
-          >
-            <v-text-field
-              v-model="recipientPersonPhone"
-              label="Телефон"
-              ref="recipientPersonPhone"
-              prepend-icon="mdi-phone"
-              :error-messages="recipientPersonPhoneErrors"
-              @input="$v.recipientPersonPhone.$touch()"
-              @blur="$v.recipientPersonPhone.$touch()"
-            >
-            </v-text-field>
-          </v-col>
-        </v-row>
-        <p class="subtitle-1 font-weight-medium black--text mt-4 mb-4">Информация по доставке</p>
+        <p class="title font-weight-medium black--text mt-4 mb-4">Информация по доставке</p>
         <v-radio-group
           v-model="atWhoseExpenseSelect"
           mandatory
@@ -231,112 +250,24 @@
           v-model="deliverySelect"
           :items="deliveryItems"
           label="Сервис доставки"
-          prepend-icon="mdi-moped"
+          prepend-icon="mdi-truck-fast"
         ></v-select>
-        <v-text-field
-          v-model="buyerOrder"
-          label="Заказ покупателя с которого будет оплачиваться доставка"
-          ref="buyerOrder"
-          :error-messages="buyerOrderErrors"
-          @blur="$v.buyerOrder.$touch()"
-        ></v-text-field>
-        <v-row>
-          <v-col class="py-0">
-            <v-row>
-              <v-col
-                cols="12"
-                sm="3"
-              >
-                <p class="v-label theme--light pt-6">Габариты</p>
-              </v-col>
-              <v-col
-                cols="12"
-                sm="2"
-              >
-                <v-text-field
-                  v-model="length"
-                  label="Длина"
-                  error-count="2"
-                  ref="length"
-                  :error-messages="lengthErrors"
-                  @input="$v.length.$touch()"
-                  @blur="$v.length.$touch()"
-                >
-                  <template v-slot:append-outer>
-                    x
-                  </template>
-                </v-text-field>
-              </v-col>
-              <v-col
-                cols="12"
-                sm="2"
-              >
-                <v-text-field
-                  v-model="width"
-                  label="Ширина"
-                  ref="width"
-                  :error-messages="widthErrors"
-                  @input="$v.width.$touch()"
-                  @blur="$v.width.$touch()"
-                >
-                  <template v-slot:append-outer>
-                    x
-                  </template>
-                </v-text-field>
-              </v-col>
-              <v-col
-              cols="12"
-              sm="2"
-            >
-              <v-text-field
-                v-model="height"
-                label="Высота"
-                ref="height"
-                :error-messages="heightErrors"
-                @input="$v.height.$touch()"
-                @blur="$v.height.$touch()"
-              ></v-text-field>
-            </v-col>
-              <v-col
-                cols="12"
-                sm="2"
-              >
-                <v-select
-                  :items="unitItems"
-                  v-model="unitSelect"
-                ></v-select>
-              </v-col>
-            </v-row>
-          </v-col>
-        </v-row>
-        <v-row no-gutters>
-          <v-col
-            cols="12"
-            xs="6"
-            sm="2"
-            mb="12"
-          >
-            <v-text-field
-              v-model="weight"
-              label="Вес"
-              suffix="кг"
-              ref="weight"
-              :error-messages="weightErrors"
-              @input="$v.weight.$touch()"
-              @blur="$v.weight.$touch()"
-            >
-            </v-text-field>
-          </v-col>
-        </v-row>
-        <p class="v-label theme--light pt-6">Дополнительные параметры</p>
+        <p>Дополнительные параметры</p>
         <v-checkbox
           class="pb-0 mb-0"
-          v-model="isLathing"
+          v-model="isInsurance"
           label="Оформить страховку"
         ></v-checkbox>
+        <v-text-field
+          v-if="isInsurance"
+          v-model="costOfCargo"
+          label="Оценочная стоимость груза"
+          :error-messages="costOfCargoErrors"
+          @blur="$v.costOfCargo.$touch"
+        ></v-text-field>
         <v-checkbox
           class="py-0 my-0"
-          v-model="isInsurance"
+          v-model="isLathing"
           label="Упаковать в обрешетку"
         ></v-checkbox>
 <!--        <v-checkbox-->
@@ -347,32 +278,25 @@
         <v-textarea
           v-model.trim="description"
           :error-messages="descriptionErrors"
-          ref="description"
           label="Описание доставки"
+          hint="Укажите нюансы доставки"
+          rows="4"
           auto-grow
           @input="$v.description.$touch()"
           @blur="$v.description.$touch()"
         ></v-textarea>
-        <v-file-input
-          v-model="files"
-          multiple
-          id="test_file_input"
-          label="Документы (необязательно)"
-          counter
-          prepend-icon="mdi-paperclip"
-        >
-          <template v-slot:selection="{ text }">
-            <v-chip
-              small
-              label
-              color="primary"
-            >
-              {{ text }}
-            </v-chip>
-          </template>
-        </v-file-input>
-        <p class="subtitle-1 font-weight-medium black--text mt-10 mb-4">Дополнительная информация</p>
-        <DealInput v-model="deal"/>
+        <p class="title font-weight-medium black--text mt-4 mb-4">Дополнительная информация</p>
+        <DealInputSync
+          v-model="deal"
+          title="Сделка (необязательно)"
+        />
+        <v-text-field
+          v-model="buyerOrder"
+          label="Заказ покупателя с которого будет оплачиваться доставка"
+          ref="buyerOrder"
+          :error-messages="buyerOrderErrors"
+          @blur="$v.buyerOrder.$touch"
+        ></v-text-field>
         <ProjectInput v-model="project"/>
         <TaskInput v-model="taskId"/>
         <v-input>
@@ -428,50 +352,76 @@
 </template>
 
 <script>
-  import { required, decimal, minValue } from 'vuelidate/lib/validators'
+  import { required, requiredIf, decimal, minValue } from 'vuelidate/lib/validators'
   import { mapGetters, mapActions } from 'vuex'
   import selectObservers from '../../../../mixins/selectObservers'
   import searchCompany from '../../../../mixins/searchCompany'
-  import DealInput from '../../DealInput'
   import ProjectInput from '../../ProjectInput'
   import TaskInput from '../../TaskInput'
+  import DealInputSync from '@/components/DealInputSync'
+  import CompanyInputSync from '@/components/CompanyInputSync'
+  import ContactInputSync from '@/components/ContactInputSync'
 
   export default {
-    name: 'SendingDocumentsForm',
-    components: { TaskInput, ProjectInput, DealInput },
+    name: 'DeliveryEquipmentForm',
+    components: { ContactInputSync, CompanyInputSync, DealInputSync, TaskInput, ProjectInput },
     mixins: [searchCompany, selectObservers],
     validations: {
-      senderCompany: { required },
-      senderAddress: { required },
-      senderPerson: { required },
-      senderPersonPhone: { required },
-      recipientCompany: { required },
-      recipientCompanyAddress: { required },
-      recipientPerson: { required },
-      recipientPersonPhone: { required },
-      buyerOrder: { required },
-      date: { required },
       length: { required, decimal, minValue: minValue(0.1) },
       width: { required, decimal, minValue: minValue(0.1) },
       height: { required, decimal, minValue: minValue(0.1) },
       weight: { required },
-      description: { required }
+      description: { required },
+      sender: {
+        companyInfo: {
+          title: { required },
+          address: { required }
+        },
+        contactName: { required },
+        phoneNumber: { required }
+      },
+      recipient: {
+        companyInfo: {
+          title: { required },
+          address: { required }
+        },
+        contactName: { required },
+        phoneNumber: { required }
+      },
+      costOfCargo: {
+        required: requiredIf(function (nestedModel) {
+          return nestedModel.isInsurance
+        })
+      },
+      buyerOrder: { required },
+      date: { required }
     },
 
     data: () => ({
-      senderCompany: {
-        id: 581,
-        title: 'ООО "ПОЛИСЕРВИС"',
-        address: 'Москва, ул. Большая Черемушкинская дом 25, стр. 97, офис 6,7,8',
-        logoURL: '/bitrix/components/bitrix/crm.company.show/show_file.php?ownerId=581&fieldName=LOGO&dynamic=N&fileId=144107'
+      isValidationError: false,
+
+      sender: {
+        companyInfo: {
+          id: '581',
+          title: 'ООО "ПОЛИСЕРВИС"',
+          address: 'Москва, ул. Большая Черемушкинская дом 25, стр. 97, офис 6,7,8',
+          logoURL: 'https://polyservice.bitrix24.ru/bitrix/components/bitrix/crm.company.show/show_file.php?ownerId=581&fieldName=LOGO&dynamic=N&fileId=144107'
+        },
+        contactName: '',
+        phoneNumber: ''
       },
-      senderAddress: 'Москва, ул. Большая Черемушскинская дом 25, стр. 97, офис 6,7,8',
-      senderPerson: '',
-      senderPersonPhone: '',
-      recipientCompany: '',
-      recipientCompanyAddress: '',
-      recipientPerson: '',
-      recipientPersonPhone: '',
+
+      recipient: {
+        companyInfo: {
+          id: '',
+          title: '',
+          address: '',
+          logoURL: ''
+        },
+        contactName: '',
+        phoneNumber: ''
+      },
+
       atWhoseExpenseSelect: 817,
       atWhoseExpenseItems: [
         {
@@ -487,8 +437,10 @@
           label: 'третьего лица'
         }
       ],
+
       date: new Date().toISOString().substr(0, 10),
       menu: false,
+
       deliverySelect: 831,
       deliveryItems: [
         {
@@ -540,22 +492,30 @@
           text: '--Иной--'
         }
       ],
-      buyerOrder: '',
+
       length: '',
       width: '',
       height: '',
       unitSelect: 1,
       unitItems: [
-        { text: 'метров', value: 1 },
-        { text: 'сантиметров', value: 2 }
+        { text: 'метр', value: 1 },
+        { text: 'сантиметр', value: 2 }
       ],
       weight: '',
+      equipmentDescription: '',
+      costOfCargo: '',
       isLathing: false,
       isInsurance: false,
       isSkin: false,
       description: '',
       files: [],
-      deal: null,
+
+      deal: {
+        id: '',
+        title: '',
+        buyerOrder: ''
+      },
+      buyerOrder: '',
       project: null,
       taskId: '',
       result: '',
@@ -564,62 +524,68 @@
       errorSnackbar: false
     }),
     computed: {
-      ...mapGetters(['getUser']),
+      ...mapGetters(['getUser', 'COMPANIES']),
       dateText () {
         return this.date.split('-').reverse().join('-')
       },
-      senderCompanyErrors () {
+      senderCompanyErrors() {
         const errors = []
-        if (!this.$v.senderCompany.$dirty) return errors
-        !this.$v.senderCompany.required && errors.push('Необходимо указать компанию отправитель')
+        if (!this.$v.sender.companyInfo.title.$dirty) return errors
+        !this.$v.sender.companyInfo.title.required && errors.push('Необходимо указать компанию отправитель34534')
         return errors
       },
       senderAddressErrors () {
         const errors = []
-        if (!this.$v.senderAddress.$dirty) return errors
-        !this.$v.senderAddress.required && errors.push('Необходимо указать адрес отправителя')
+        if (!this.$v.sender.companyInfo.address.$dirty) return errors
+        !this.$v.sender.companyInfo.address.required && errors.push('Необходимо указать адрес отправителя')
         return errors
       },
-      senderPersonErrors () {
+      senderContactNameErrors () {
         const errors = []
-        if (!this.$v.senderPerson.$dirty) return errors
-        !this.$v.senderPerson.required && errors.push('Необходимо указать контактное лицо отправителя')
+        if (!this.$v.sender.contactName.$dirty) return errors
+        !this.$v.sender.contactName.required && errors.push('Необходимо указать контактное лицо отправителя23423')
         return errors
       },
-      senderPersonPhoneErrors () {
+      senderContactPhoneErrors () {
         const errors = []
-        if (!this.$v.senderPersonPhone.$dirty) return errors
-        !this.$v.senderPersonPhone.required && errors.push('Необходимо указать телефон отправителя')
+        if (!this.$v.sender.phoneNumber.$dirty) return errors
+        !this.$v.sender.phoneNumber.required && errors.push('Необходимо указать телефон отправителя22222222')
         return errors
       },
       recipientCompanyErrors () {
         const errors = []
-        if (!this.$v.recipientCompany.$dirty) return errors
-        !this.$v.recipientCompany.required && errors.push('Необходимо указать компанию получатель')
+        if (!this.$v.recipient.companyInfo.title.$dirty) return errors
+        !this.$v.recipient.companyInfo.title.required && errors.push('Необходимо указать компанию получатель')
         return errors
       },
       recipientCompanyAddressErrors () {
         const errors = []
-        if (!this.$v.recipientCompanyAddress.$dirty) return errors
-        !this.$v.recipientCompanyAddress.required && errors.push('Необходимо указать адрес компании получателя')
+        if (!this.$v.recipient.companyInfo.address.$dirty) return errors
+        !this.$v.recipient.companyInfo.address.required && errors.push('Необходимо указать адрес компании получателя')
         return errors
       },
-      recipientPersonErrors () {
+      recipientContactNameErrors () {
         const errors = []
-        if (!this.$v.recipientPerson.$dirty) return errors
-        !this.$v.recipientPerson.required && errors.push('Необходимо указать контакт получателя')
+        if (!this.$v.recipient.contactName.$dirty) return errors
+        !this.$v.recipient.contactName.required && errors.push('Необходимо указать контакт получателя')
         return errors
       },
-      recipientPersonPhoneErrors () {
+      recipientContactPhoneErrors () {
         const errors = []
-        if (!this.$v.recipientPersonPhone.$dirty) return errors
-        !this.$v.recipientPersonPhone.required && errors.push('Необходимо указать телефон получателя')
+        if (!this.$v.recipient.phoneNumber.$dirty) return errors
+        !this.$v.recipient.phoneNumber.required && errors.push('Необходимо указать телефон получателя')
         return errors
       },
       buyerOrderErrors () {
         const errors = []
         if (!this.$v.buyerOrder.$dirty) return errors
         !this.$v.buyerOrder.required && errors.push('Необходимо указать заказ покупателя')
+        return errors
+      },
+      costOfCargoErrors() {
+        const errors = []
+        if (!this.$v.costOfCargo.$dirty) return errors
+        !this.$v.costOfCargo.required && errors.push('Необходимо указать оценочную стоимость груза')
         return errors
       },
       dateErrors () {
@@ -666,42 +632,64 @@
       }
     },
     watch: {
-      senderCompany (val) {
-        console.log(this.senderAddress)
-        this.senderAddress = val.address.replace(/\|.*/, '')
-        this.atWhoseExpenseItems[0].label = `отправителя (${val.title || val})`
+      'sender.companyInfo.address'(val) {
+        val && (this.sender.companyInfo.address = this.trimCoordinates(val))
       },
-      recipientCompany (val) {
-        this.recipientCompanyAddress = val.address.replace(/\|.*/, '')
-        this.atWhoseExpenseItems[1].label = `получателя (${val.title || val})`
+      'recipient.companyInfo.address'(val) {
+        val && (this.recipient.companyInfo.address = this.trimCoordinates(val))
+      },
+      'sender.companyInfo.title'(val) {
+        this.atWhoseExpenseItems[0].label = `отправителя (${val})`
+      },
+      'recipient.companyInfo.title'(val) {
+        this.atWhoseExpenseItems[1].label = `получателя (${val})`
+      },
+      'deal.buyerOrder'(val) {
+        this.buyerOrder = val
       }
     },
     methods: {
       ...mapActions(['addDeliveryEquipmentRequest']),
+      trimCoordinates(value = '') {
+        return value.replace(/\|.*/, '')
+      },
+      updateSenderName(data) {
+        this.sender.contactName = data
+      },
+      updateSenderPhone(data) {
+        this.sender.phoneNumber = data
+      },
+      updateRecipientName(data) {
+        this.recipient.contactName = data
+      },
+      updateRecipientPhone(data) {
+        this.recipient.phoneNumber = data
+      },
       async submit () {
         this.$v.$touch()
         if (this.$v.$invalid) {
-          for (const key in Object.keys(this.$v)) {
-            const input = Object.keys(this.$v)[key]
-            if (input.includes('$')) return false
-            if (this.$v[input].$error) {
-              this.$refs[input].focus()
-              break
-            }
-          }
+          this.isValidationError = true
+          // for (const key in Object.keys(this.$v)) {
+          //   const input = Object.keys(this.$v)[key]
+          //   if (input.includes('$')) return false
+          //   if (this.$v[input].$error) {
+          //     this.$refs[input].focus()
+          //     break
+          //   }
+          // }
           return false
         } else {
           this.$v.$reset()
           this.loading = true
           const formData = {
-            senderCompany: this.senderCompany.title || this.senderCompany,
-            senderAddress: this.senderAddress,
-            senderPerson: this.senderPerson,
-            senderPersonPhone: this.senderPersonPhone,
-            recipientCompany: this.recipientCompany.title || this.recipientCompany,
-            recipientCompanyAddress: this.recipientCompanyAddress,
-            recipientPerson: this.recipientPerson,
-            recipientPersonPhone: this.recipientPersonPhone,
+            senderCompany: this.sender.companyInfo.title,
+            senderAddress: this.sender.companyInfo.address,
+            senderContactName: this.sender.contactName,
+            senderPhoneNumber: this.sender.phoneNumber,
+            recipientCompany: this.recipient.companyInfo.title,
+            recipientAddress: this.recipient.companyInfo.address,
+            recipientContactName: this.recipient.contactName,
+            recipientPhoneNumber: this.recipient.phoneNumber,
             atWhoseExpense: this.atWhoseExpenseSelect,
             delivery: this.deliverySelect,
             date: this.date,
@@ -709,6 +697,7 @@
             dimensions: `${this.length} x ${this.width} x ${this.height} ${this.unitItems.filter(item => item.value === this.unitSelect)[0].text}`,
             isLathing: this.isLathing,
             isInsurance: this.isInsurance,
+            costOfCargo: this.costOfCargo,
             weight: this.weight + ' кг',
             description: this.description,
             files: this.files,
@@ -731,9 +720,3 @@
     }
   }
 </script>
-
-<!--productTypeSelect: { required },-->
-<!--conditionSelect: {-->
-<!--required: requiredIf(function () {-->
-<!--return this.productTypeSelect !== 567-->
-<!--})-->

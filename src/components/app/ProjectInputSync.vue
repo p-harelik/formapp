@@ -3,7 +3,7 @@
     <v-autocomplete
       v-model="projectValue"
       label="Проект"
-      placeholder="Начните вводить название"
+      placeholder="Начните вводить название проекта"
       :items="projectItems"
       item-text="NAME"
       hide-no-data
@@ -69,7 +69,6 @@ export default {
         }
       }
       Bitrix.getList(request).then(res => {
-        console.log(res)
         this.projectItems = res
         this.isLoadingProject = false
       })

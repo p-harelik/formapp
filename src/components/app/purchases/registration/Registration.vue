@@ -80,7 +80,5 @@
 </script>
 
 <style scoped>
-  .v-window {
-    overflow: unset;
-  }
+
 </style>

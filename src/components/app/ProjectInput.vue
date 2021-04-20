@@ -40,7 +40,7 @@
       }
     },
     created () {
-      console.log(this, 'из поля проект')
+      // console.log(this, 'из поля проект')
       if (this.getGroup.id) {
         this.project = this.getGroup
         this.isProjectPlacement = true

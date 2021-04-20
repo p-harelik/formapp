@@ -1,8 +1,8 @@
 <template>
-  <v-app>
+  <v-app class="main-wrap">
     <div class="app grey lighten-4" id="app">
     <Sidebar/>
-    <v-main>
+    <v-main class="main">
         <router-view/>
     </v-main>
     </div>
@@ -21,8 +21,13 @@
 </script>
 
 <style>
+.main-wrap {
+  overflow: auto;
+}
 .app {
   min-height: 100vh;
+  width: 100%;
+  min-width: 650px;
 }
 .wrapper-form {
   width: 90%;

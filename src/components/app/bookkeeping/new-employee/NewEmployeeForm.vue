@@ -52,6 +52,7 @@
                 v-model="surname"
                 label="Фамилия"
                 ref="surname"
+                autofocus
                 :error-messages="surnameErrors"
                 @blur="$v.surname.$touch()"
               />
@@ -142,6 +143,14 @@
               />
             </v-col>
           </v-row>
+          <v-textarea
+            v-model="termsOfRegistration"
+            label="Условия оформления"
+            rows="3"
+            ref="termsOfRegistration"
+            :error-messages="termsOfRegistrationErrors"
+            @blur="$v.termsOfRegistration.$touch"
+          ></v-textarea>
           <v-btn
             class="mr-4 mb-4"
             color="primary"
@@ -168,7 +177,8 @@
       patronymic: { required },
       email: { required },
       phone: { required },
-      vacancy: { required }
+      vacancy: { required },
+      termsOfRegistration: { required }
     },
     data: () => ({
       name: null,
@@ -177,6 +187,7 @@
       email: null,
       phone: null,
       vacancy: null,
+      termsOfRegistration: '',
       result: '',
       loading: false,
       successSnackbar: false,
@@ -218,6 +229,12 @@
         if (!this.$v.vacancy.$dirty) return errors
         !this.$v.vacancy.required && errors.push('Укажите должность')
         return errors
+      },
+      termsOfRegistrationErrors () {
+        const errors = []
+        if (!this.$v.termsOfRegistration.$dirty) return errors
+        !this.$v.termsOfRegistration.required && errors.push('Укажите условия оформления')
+        return errors
       }
     },
     methods: {
@@ -244,14 +261,16 @@
             patronymic: this.patronymic,
             email: this.email,
             phone: this.phone,
-            vacancy: this.vacancy
+            vacancy: this.vacancy,
+            termsOfRegistration: this.termsOfRegistration
           }
           const result = await this.newEmployeeRequest(formData)
           this.loading = false
           this.result = result
           if (result.elementId) {
             this.successSnackbar = true
-            this.surname = this.name = this.patronymic = this.email = this.phone = this.vacancy = null
+            this.surname = this.name = this.patronymic = this.email = this.phone = this.vacancy =
+            this.termsOfRegistration = null
           } else {
             this.errorSnackbar = true
           }

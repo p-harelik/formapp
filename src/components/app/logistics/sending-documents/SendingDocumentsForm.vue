@@ -228,7 +228,7 @@
           </template>
         </v-file-input>
         <p class="subtitle-1 font-weight-medium black--text mt-10 mb-4">Дополнительная информация</p>
-        <DealInput v-model="deal"/>
+        <DealInputSync v-model="deal"/>
         <ProjectInput v-model="project"/>
         <v-text-field
           type="number"
@@ -295,12 +295,12 @@
   import { mapGetters, mapActions } from 'vuex'
   import selectObservers from '../../../../mixins/selectObservers'
   import searchCompany from '../../../../mixins/searchCompany'
-  import DealInput from '../../DealInput'
   import ProjectInput from '../../ProjectInput'
+  import DealInputSync from '@/components/DealInputSync'
 
   export default {
     name: 'SendingDocumentsForm',
-    components: { ProjectInput, DealInput },
+    components: { DealInputSync, ProjectInput },
     mixins: [searchCompany, selectObservers],
     validations: {
       senderCompany: { required },
@@ -396,7 +396,7 @@
       errorSnackbar: false
     }),
     computed: {
-      ...mapGetters(['getTask']),
+      ...mapGetters(['getTask', 'DEALS']),
       dateText () {
         return this.date.split('-').reverse().join('-')
       },
@@ -458,13 +458,20 @@
         this.atWhoseExpenseItems[1].label = `получателя (${val.title || val})`
       },
       deal (val) {
-        console.log(val, 'val')
         this.buyerOrder = val?.buyerOrder || ''
-        console.log(this.buyerOrder, 'buerd')
       }
     },
     methods: {
       ...mapActions(['addSendDocsRequest']),
+      crmSelect() {
+        console.log('clicked')
+        // window.BX24.selectUsers(res => console.log(res))
+        window.BX24.selectCRM({
+          entityType: ['deal']
+        }, function(res) {
+          console.log(res, 'asdasd')
+        })
+      },
       async submit () {
         this.$v.$touch()
         if (this.$v.$invalid) {
@@ -511,6 +518,7 @@
     },
     created () {
       this.taskId = this.getTask.id
+      console.log(this.DEALS, 'Список сделок')
     }
   }
 </script>

@@ -155,7 +155,8 @@ export default {
             PROPERTY_191: data.patronymic,
             PROPERTY_193: data.phone,
             PROPERTY_195: data.email,
-            PROPERTY_197: data.vacancy
+            PROPERTY_197: data.vacancy,
+            PROPERTY_207: data.termsOfRegistration
           }
         }
         const res = await Bitrix.callMethod('lists.element.add', params)
