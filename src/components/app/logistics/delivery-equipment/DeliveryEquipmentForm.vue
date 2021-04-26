@@ -49,84 +49,147 @@
       <form @submit.prevent >
         <p class="title font-weight-medium black--text mt-4 mb-4">Параметры оборудования</p>
         <div>
-          <p>Габариты и вес</p>
-              <v-row>
-                <v-col
-                >
-                  <v-select
-                    label="Ед. измерения"
-                    :items="unitItems"
-                    v-model="unitSelect"
-                  ></v-select>
-                </v-col>
-                <v-col
-                >
-                  <v-text-field
-                    v-model="length"
-                    label="Длина"
-                    error-count="2"
-                    ref="length"
-                    :error-messages="lengthErrors"
-                    @input="$v.length.$touch()"
-                    @blur="$v.length.$touch()"
+          <div
+            v-for="(place, index) in $v.places.$each.$iter"
+            :key="index"
+          >
+            <v-divider
+              v-if="+index"
+              class="mb-6"
+            ></v-divider>
+            <p class="mb-0">Место {{+index + 1}}
+              <v-tooltip
+                right
+                max-width="250"
+                color="rgba(0,0,0,0)"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    icon
+                    x-small
+                    v-bind="attrs"
+                    v-on="on"
                   >
-                    <template v-slot:append-outer>
-                      x
-                    </template>
-                  </v-text-field>
-                </v-col>
-                <v-col
+                    <v-icon color="blue lighten-1">
+                      mdi-help-circle-outline
+                    </v-icon>
+                  </v-btn>
+                </template>
+                <v-card
+                  dark
+                  color="#363636"
                 >
-                  <v-text-field
-                    v-model="width"
-                    label="Ширина"
-                    ref="width"
-                    :error-messages="widthErrors"
-                    @input="$v.width.$touch()"
-                    @blur="$v.width.$touch()"
-                  >
-                    <template v-slot:append-outer>
-                      x
-                    </template>
-                  </v-text-field>
-                </v-col>
-                <v-col
+                  <v-card-title>
+                    Место
+                  </v-card-title>
+                  <v-card-text>
+                    Груз состоит из одного предмета: свёртка,
+                    мешка, коробки, ящика, заполненного палета
+                    и т.п. вне зависимости от размера.
+                  </v-card-text>
+                </v-card>
+              </v-tooltip>
+              <v-btn
+                title="Дублировать место"
+                icon
+                color="primary"
+                @click="copyPlace(+index)"
+              >
+                <v-icon>mdi-content-copy</v-icon>
+              </v-btn>
+              <v-btn
+                v-if="+index"
+                title="Удалить место"
+                icon
+                color="red"
+                @click="removePlace(+index)"
+              >
+                <v-icon>mdi-close</v-icon>
+              </v-btn>
+            </p>
+            <v-row>
+              <v-col
+                cols="12"
+                md="3"
+                sm="6"
+                xs="12"
+              >
+                <v-text-field
+                  v-model="place.$model.length"
+                  label="Длина"
+                  error-count="2"
+                  suffix="см"
+                  type="number"
+                  min="1"
+                  :error-messages="placeError(place.length, 'Укажите длину')"
+                  @blur="place.length.$touch"
                 >
-                  <v-text-field
-                    v-model="height"
-                    label="Высота"
-                    ref="height"
-                    :error-messages="heightErrors"
-                    @input="$v.height.$touch()"
-                    @blur="$v.height.$touch()"
-                  ></v-text-field>
-                </v-col>
-                <v-col
+                </v-text-field>
+              </v-col>
+              <v-col
+                cols="12"
+                md="3"
+                sm="6"
+                xs="12"
+              >
+                <v-text-field
+                  v-model="place.$model.width"
+                  label="Ширина"
+                  type="number"
+                  suffix="см"
+                  min="1"
+                  :error-messages="placeError(place.width, 'Укажите ширину')"
+                  @blur="place.width.$touch"
                 >
-                  <v-text-field
-                    v-model="weight"
-                    label="Вес"
-                    suffix="кг"
-                    ref="weight"
-                    :error-messages="weightErrors"
-                    @input="$v.weight.$touch()"
-                    @blur="$v.weight.$touch()"
-                  >
-                  </v-text-field>
-                </v-col>
-              </v-row>
+                </v-text-field>
+              </v-col>
+              <v-col
+                cols="12"
+                md="3"
+                sm="6"
+                xs="12"
+              >
+                <v-text-field
+                  v-model="place.$model.height"
+                  label="Высота"
+                  type="number"
+                  suffix="см"
+                  min="1"
+                  :error-messages="placeError(place.height, 'Укажите высоту')"
+                  @blur="place.height.$touch"
+                ></v-text-field>
+              </v-col>
+              <v-col
+                md="3"
+                sm="6"
+              >
+                <v-text-field
+                  v-model="place.$model.weight"
+                  label="Вес"
+                  type="number"
+                  suffix="кг"
+                  step="0.1"
+                  min="0.1"
+                  :error-messages="placeError(place.weight, 'Укажите вес')"
+                  @blur="place.weight.$touch"
+                >
+                </v-text-field>
+              </v-col>
+            </v-row>
+            <v-text-field
+              v-model.trim="place.$model.natureOfCargo"
+              label="Наименование оборудования"
+              :error-messages="placeError(place.natureOfCargo, 'Укажите наименование оборудования')"
+              @blur="place.natureOfCargo.$touch"
+            >
+            </v-text-field>
+          </div>
+          <v-btn
+            class="mb-6"
+            outlined
+            color="primary"
+            @click="addPlace">Добавить место</v-btn>
         </div>
-        <v-textarea
-          v-model.trim="description"
-          :error-messages="descriptionErrors"
-          ref="description"
-          label="Описание оборудования"
-          placeholder="Укажите наименования перевозимого обородования"
-          auto-grow
-          rows="3"
-          @input="$v.description.$touch()"
-          @blur="$v.description.$touch()"
-        ></v-textarea>
         <v-file-input
           v-model="files"
           multiple
@@ -146,53 +209,102 @@
           </template>
         </v-file-input>
         <p class="title font-weight-medium black--text mt-4 mb-4">Данные отправителя</p>
-        <CompanyInputSync
-          v-model="sender.companyInfo"
-          label="Компания отправитель"
-          :error-messages="senderCompanyErrors"
-          :blur="$v.sender.companyInfo.title.$touch"
-        />
+        <v-tabs
+          v-model="sender.tab"
+          color="white"
+          active-class="grey lighten-1"
+          grow
+          hide-slider
+        >
+          <v-tab>Компания</v-tab>
+          <v-tab>Физ. лицо</v-tab>
+          <v-tabs-items
+            v-model="sender.tab"
+            class="mt-10 tabs-items--active"
+          >
+            <v-tab-item>
+              <CompanyInputSync
+                v-model="sender.companyInfo"
+                label="Компания отправитель"
+                :error-messages="requiredError($v.sender.companyInfo.title, 'Укажите компанию отправителя')"
+                :blur="$v.sender.companyInfo.title.$touch"
+              />
+            </v-tab-item>
+            <v-tab-item>
+              <v-textarea
+                v-model="sender.passportData"
+                label="Паспортные данные физ. лица"
+                rows="2"
+              >
+              </v-textarea>
+            </v-tab-item>
+          </v-tabs-items>
+        </v-tabs>
         <ContactInputSync
           :company-id="sender.companyInfo.id"
           :contact-name="sender.contactName"
           :contact-phone="sender.phoneNumber"
           @contact-changed="updateSenderName"
           @phone-changed="updateSenderPhone"
-          :contact-name-errors="senderContactNameErrors"
-          :contact-phone-errors="senderContactPhoneErrors"
+          :contact-name-errors="requiredError($v.sender.contactName, 'Укажите контакт отправителя')"
+          :contact-phone-errors="requiredError($v.sender.phoneNumber, 'Укажите телефон отправителя')"
         />
         <v-text-field
-          v-model="sender.companyInfo.address"
+          v-model="sender.address"
           label="Адрес отправителя"
           ref="senderAddress"
           prepend-icon="mdi-map-marker"
-          :error-messages="senderAddressErrors"
-          @blur="$v.sender.companyInfo.address.$touch"
+          :error-messages="requiredError($v.sender.address, 'Укажите адрес отправителя')"
+          @blur="$v.sender.address.$touch"
         ></v-text-field>
         <p class="title font-weight-medium black--text mt-4 mb-4">Данные получателя</p>
-        <CompanyInputSync
-          v-model="recipient.companyInfo"
-          label="Компания получатель"
-          :error-messages="recipientCompanyErrors"
-          ref="recipientCompany"
-        />
+        <v-tabs
+          v-model="recipient.tab"
+          color="white"
+          active-class="grey lighten-1"
+          grow
+          hide-slider
+        >
+          <v-tab>Компания</v-tab>
+          <v-tab>Физ. лицо</v-tab>
+          <v-tabs-items
+            v-model="recipient.tab"
+            class="mt-10 tabs-items--active"
+          >
+            <v-tab-item>
+              <CompanyInputSync
+                v-model="recipient.companyInfo"
+                label="Компания получатель"
+                :error-messages="requiredError($v.recipient.companyInfo.title, 'Укажите компанию получателя')"
+                :blur="$v.recipient.companyInfo.title.$touch"
+              />
+            </v-tab-item>
+            <v-tab-item>
+              <v-textarea
+                v-model="recipient.passportData"
+                label="Паспортные данные физ. лица"
+                rows="2"
+              >
+              </v-textarea>
+            </v-tab-item>
+          </v-tabs-items>
+        </v-tabs>
         <ContactInputSync
           :company-id="recipient.companyInfo.id"
           :contact-name="recipient.contactName"
           :contact-phone="recipient.phoneNumber"
           @contact-changed="updateRecipientName"
           @phone-changed="updateRecipientPhone"
-          :contact-name-errors="recipientContactNameErrors"
-          :contact-phone-errors="recipientContactPhoneErrors"
+          :contact-name-errors="requiredError($v.recipient.contactName, 'Укажите контакт получателя')"
+          :contact-phone-errors="requiredError($v.recipient.phoneNumber, 'Укажите телефон получателя')"
         />
         <v-text-field
-          v-model="recipient.companyInfo.address"
+          v-model="recipient.address"
           label="Адрес получателя"
           ref="recipientCompanyAddress"
           prepend-icon="mdi-map-marker"
-          :error-messages="recipientCompanyAddressErrors"
-          @input="$v.recipient.companyInfo.address.$touch"
-          @blur="$v.recipient.companyInfo.address.$touch"
+          :error-messages="requiredError($v.recipient.address, 'Укажите адрес получателя')"
+          @blur="$v.recipient.address.$touch"
         ></v-text-field>
         <p class="title font-weight-medium black--text mt-4 mb-4">Информация по доставке</p>
         <v-radio-group
@@ -228,7 +340,7 @@
               <template v-slot:activator="{ on, attrs }">
                 <v-text-field
                   v-model="dateText"
-                  :error-messages="dateErrors"
+                  :error-messages="requiredError($v.date, 'Необходимо указать дату доставки')"
                   label="Дата передачи в доставку"
                   prepend-icon="mdi-calendar"
                   readonly
@@ -238,7 +350,7 @@
               </template>
               <v-date-picker
                 v-model="date"
-                :min="new Date().toISOString().substr(0, 10)"
+                :min="date"
                 locale="ru"
                 first-day-of-week="1"
                 @input="menu = false"
@@ -252,38 +364,40 @@
           label="Сервис доставки"
           prepend-icon="mdi-truck-fast"
         ></v-select>
-        <p>Дополнительные параметры</p>
+        <p>Дополнительные услуги</p>
         <v-checkbox
           class="pb-0 mb-0"
           v-model="isInsurance"
           label="Оформить страховку"
         ></v-checkbox>
-        <v-text-field
-          v-if="isInsurance"
-          v-model="costOfCargo"
-          label="Оценочная стоимость груза"
-          :error-messages="costOfCargoErrors"
-          @blur="$v.costOfCargo.$touch"
-        ></v-text-field>
+        <v-row v-if="isInsurance">
+          <v-col
+            class="my-0 py-0"
+            md="4"
+            sm="6"
+            xs="12"
+          >
+            <v-text-field
+              v-model="costOfCargo"
+              v-money="costOfCargo"
+              suffix="руб"
+              label="Оценочная стоимость груза"
+              :error-messages="requiredError($v.costOfCargo, 'Укажите оценочную стоимость груза')"
+              @blur="$v.costOfCargo.$touch"
+            ></v-text-field>
+          </v-col>
+        </v-row>
         <v-checkbox
           class="py-0 my-0"
           v-model="isLathing"
           label="Упаковать в обрешетку"
         ></v-checkbox>
-<!--        <v-checkbox-->
-<!--          class="py-0 my-0"-->
-<!--          v-model="isSkin"-->
-<!--          label="Упаковать в воздушно-пузырьковую пленку"-->
-<!--        ></v-checkbox>-->
         <v-textarea
-          v-model.trim="description"
-          :error-messages="descriptionErrors"
-          label="Описание доставки"
+          v-model.trim="deliveryComment"
+          label="Комментарии к доставки"
           hint="Укажите нюансы доставки"
-          rows="4"
+          rows="3"
           auto-grow
-          @input="$v.description.$touch()"
-          @blur="$v.description.$touch()"
         ></v-textarea>
         <p class="title font-weight-medium black--text mt-4 mb-4">Дополнительная информация</p>
         <DealInputSync
@@ -294,7 +408,7 @@
           v-model="buyerOrder"
           label="Заказ покупателя с которого будет оплачиваться доставка"
           ref="buyerOrder"
-          :error-messages="buyerOrderErrors"
+          :error-messages="requiredError($v.buyerOrder, 'Укажите заказ покупателя')"
           @blur="$v.buyerOrder.$touch"
         ></v-text-field>
         <ProjectInput v-model="project"/>
@@ -352,7 +466,7 @@
 </template>
 
 <script>
-  import { required, requiredIf, decimal, minValue } from 'vuelidate/lib/validators'
+  import { required, requiredIf } from 'vuelidate/lib/validators'
   import { mapGetters, mapActions } from 'vuex'
   import selectObservers from '../../../../mixins/selectObservers'
   import searchCompany from '../../../../mixins/searchCompany'
@@ -367,26 +481,38 @@
     components: { ContactInputSync, CompanyInputSync, DealInputSync, TaskInput, ProjectInput },
     mixins: [searchCompany, selectObservers],
     validations: {
-      length: { required, decimal, minValue: minValue(0.1) },
-      width: { required, decimal, minValue: minValue(0.1) },
-      height: { required, decimal, minValue: minValue(0.1) },
-      weight: { required },
-      description: { required },
+      places: {
+        $each: {
+          length: { required },
+          width: { required },
+          height: { required },
+          weight: { required },
+          natureOfCargo: { required }
+        }
+      },
       sender: {
         companyInfo: {
-          title: { required },
-          address: { required }
+          title: {
+            required: requiredIf(function () {
+              return this.sender.tab === 0
+            })
+          }
         },
         contactName: { required },
-        phoneNumber: { required }
+        phoneNumber: { required },
+        address: { required }
       },
       recipient: {
         companyInfo: {
-          title: { required },
-          address: { required }
+          title: {
+            required: requiredIf(function () {
+              return this.recipient.tab === 0
+            })
+          }
         },
         contactName: { required },
-        phoneNumber: { required }
+        phoneNumber: { required },
+        address: { required }
       },
       costOfCargo: {
         required: requiredIf(function (nestedModel) {
@@ -400,26 +526,44 @@
     data: () => ({
       isValidationError: false,
 
+      places: [
+        {
+          unitSelect: 1,
+          length: '',
+          width: '',
+          height: '',
+          weight: '',
+          natureOfCargo: ''
+        }
+      ],
+      files: [],
+
       sender: {
+        tab: null,
         companyInfo: {
           id: '581',
           title: 'ООО "ПОЛИСЕРВИС"',
           address: 'Москва, ул. Большая Черемушкинская дом 25, стр. 97, офис 6,7,8',
           logoURL: 'https://polyservice.bitrix24.ru/bitrix/components/bitrix/crm.company.show/show_file.php?ownerId=581&fieldName=LOGO&dynamic=N&fileId=144107'
         },
+        passportData: 'ФИО: \nСерия и номер: ',
         contactName: '',
-        phoneNumber: ''
+        phoneNumber: '',
+        address: 'Москва, ул. Большая Черемушкинская дом 25, стр. 97, офис 6,7,8'
       },
 
       recipient: {
+        tab: null,
         companyInfo: {
           id: '',
           title: '',
           address: '',
           logoURL: ''
         },
+        passportData: 'ФИО: \nСерия и номер: ',
         contactName: '',
-        phoneNumber: ''
+        phoneNumber: '',
+        address: ''
       },
 
       atWhoseExpenseSelect: 817,
@@ -472,6 +616,14 @@
           text: 'Почта России'
         },
         {
+          value: 1035,
+          text: 'EMS Почта России'
+        },
+        {
+          value: 1033,
+          text: 'ПЭК:'
+        },
+        {
           value: 821,
           text: 'СДЭК'
         },
@@ -493,22 +645,10 @@
         }
       ],
 
-      length: '',
-      width: '',
-      height: '',
-      unitSelect: 1,
-      unitItems: [
-        { text: 'метр', value: 1 },
-        { text: 'сантиметр', value: 2 }
-      ],
-      weight: '',
-      equipmentDescription: '',
+      isInsurance: false,
       costOfCargo: '',
       isLathing: false,
-      isInsurance: false,
-      isSkin: false,
-      description: '',
-      files: [],
+      deliveryComment: '',
 
       deal: {
         id: '',
@@ -527,122 +667,39 @@
       ...mapGetters(['getUser', 'COMPANIES']),
       dateText () {
         return this.date.split('-').reverse().join('-')
-      },
-      senderCompanyErrors() {
-        const errors = []
-        if (!this.$v.sender.companyInfo.title.$dirty) return errors
-        !this.$v.sender.companyInfo.title.required && errors.push('Необходимо указать компанию отправитель34534')
-        return errors
-      },
-      senderAddressErrors () {
-        const errors = []
-        if (!this.$v.sender.companyInfo.address.$dirty) return errors
-        !this.$v.sender.companyInfo.address.required && errors.push('Необходимо указать адрес отправителя')
-        return errors
-      },
-      senderContactNameErrors () {
-        const errors = []
-        if (!this.$v.sender.contactName.$dirty) return errors
-        !this.$v.sender.contactName.required && errors.push('Необходимо указать контактное лицо отправителя23423')
-        return errors
-      },
-      senderContactPhoneErrors () {
-        const errors = []
-        if (!this.$v.sender.phoneNumber.$dirty) return errors
-        !this.$v.sender.phoneNumber.required && errors.push('Необходимо указать телефон отправителя22222222')
-        return errors
-      },
-      recipientCompanyErrors () {
-        const errors = []
-        if (!this.$v.recipient.companyInfo.title.$dirty) return errors
-        !this.$v.recipient.companyInfo.title.required && errors.push('Необходимо указать компанию получатель')
-        return errors
-      },
-      recipientCompanyAddressErrors () {
-        const errors = []
-        if (!this.$v.recipient.companyInfo.address.$dirty) return errors
-        !this.$v.recipient.companyInfo.address.required && errors.push('Необходимо указать адрес компании получателя')
-        return errors
-      },
-      recipientContactNameErrors () {
-        const errors = []
-        if (!this.$v.recipient.contactName.$dirty) return errors
-        !this.$v.recipient.contactName.required && errors.push('Необходимо указать контакт получателя')
-        return errors
-      },
-      recipientContactPhoneErrors () {
-        const errors = []
-        if (!this.$v.recipient.phoneNumber.$dirty) return errors
-        !this.$v.recipient.phoneNumber.required && errors.push('Необходимо указать телефон получателя')
-        return errors
-      },
-      buyerOrderErrors () {
-        const errors = []
-        if (!this.$v.buyerOrder.$dirty) return errors
-        !this.$v.buyerOrder.required && errors.push('Необходимо указать заказ покупателя')
-        return errors
-      },
-      costOfCargoErrors() {
-        const errors = []
-        if (!this.$v.costOfCargo.$dirty) return errors
-        !this.$v.costOfCargo.required && errors.push('Необходимо указать оценочную стоимость груза')
-        return errors
-      },
-      dateErrors () {
-        const errors = []
-        if (!this.$v.date.$dirty) return errors
-        !this.$v.date.required && errors.push('Необходимо указать дату доставки')
-        return errors
-      },
-      lengthErrors () {
-        const errors = []
-        if (!this.$v.length.$dirty) return errors
-        !this.$v.length.decimal && errors.push('Укажите число')
-        !this.$v.length.minValue && errors.push('Минимально 0.1')
-        !this.$v.length.required && errors.push('Укажите длину (например 1 или 0.5)')
-        return errors
-      },
-      widthErrors () {
-        const errors = []
-        if (!this.$v.width.$dirty) return errors
-        !this.$v.width.decimal && errors.push('Укажите число')
-        !this.$v.width.minValue && errors.push('Минимально 0.1')
-        !this.$v.width.required && errors.push('Укажите ширину (например 1 или 0.5)')
-        return errors
-      },
-      heightErrors () {
-        const errors = []
-        if (!this.$v.height.$dirty) return errors
-        !this.$v.height.decimal && errors.push('Укажите число')
-        !this.$v.height.minValue && errors.push('Минимально 0.1')
-        !this.$v.height.required && errors.push('Укажите высоту (например 1 или 0.5)')
-        return errors
-      },
-      weightErrors () {
-        const errors = []
-        if (!this.$v.weight.$dirty) return errors
-        !this.$v.weight.required && errors.push('Укажите вес содержимого')
-        return errors
-      },
-      descriptionErrors () {
-        const errors = []
-        if (!this.$v.description.$dirty) return errors
-        !this.$v.description.required && errors.push('Необходимо добавить какое-либо описание')
-        return errors
       }
     },
     watch: {
       'sender.companyInfo.address'(val) {
-        val && (this.sender.companyInfo.address = this.trimCoordinates(val))
+        val && (this.sender.address = this.trimCoordinates(val))
+      },
+      'sender.tab'(val) {
+        if (val === 1) {
+          this.sender.companyInfo.title = ''
+        }
+      },
+      'recipient.tab'(val) {
+        if (val === 1) {
+          this.recipient.companyInfo.title = ''
+        }
       },
       'recipient.companyInfo.address'(val) {
-        val && (this.recipient.companyInfo.address = this.trimCoordinates(val))
+        val && (this.recipient.address = this.trimCoordinates(val))
       },
       'sender.companyInfo.title'(val) {
-        this.atWhoseExpenseItems[0].label = `отправителя (${val})`
+        val
+          ? this.atWhoseExpenseItems[0].label = `отправителя (${val})`
+          : this.atWhoseExpenseItems[0].label = 'отправителя'
       },
       'recipient.companyInfo.title'(val) {
-        this.atWhoseExpenseItems[1].label = `получателя (${val})`
+        val
+          ? this.atWhoseExpenseItems[1].label = `получателя (${val})`
+          : this.atWhoseExpenseItems[1].label = 'получателя'
+      },
+      isInsurance() {
+        if (!this.isInsurance) {
+          this.costOfCargo = ''
+        }
       },
       'deal.buyerOrder'(val) {
         this.buyerOrder = val
@@ -665,41 +722,55 @@
       updateRecipientPhone(data) {
         this.recipient.phoneNumber = data
       },
+      addPlace() {
+        this.places.push({
+          unitSelect: 1,
+          length: '',
+          width: '',
+          height: '',
+          weight: '',
+          natureOfCargo: ''
+        })
+      },
+      removePlace(id) {
+        this.places = this.places.filter((item, index) => index !== id)
+      },
+      copyPlace(id) {
+        this.places = [...this.places.slice(0, id), Object.assign({}, this.places[id]), ...this.places.slice(id)]
+        // this.places.push(Object.assign({}, this.places[id]))
+      },
+      placeError(field, text) {
+        const errors = []
+        if (!field.$dirty) return errors
+        !field.required && errors.push(text)
+        return errors
+      },
+      requiredError(field, text) {
+        const errors = []
+        if (!field.$dirty) return errors
+        !field.required && errors.push(text)
+        return errors
+      },
       async submit () {
         this.$v.$touch()
         if (this.$v.$invalid) {
           this.isValidationError = true
-          // for (const key in Object.keys(this.$v)) {
-          //   const input = Object.keys(this.$v)[key]
-          //   if (input.includes('$')) return false
-          //   if (this.$v[input].$error) {
-          //     this.$refs[input].focus()
-          //     break
-          //   }
-          // }
           return false
         } else {
           this.$v.$reset()
           this.loading = true
           const formData = {
-            senderCompany: this.sender.companyInfo.title,
-            senderAddress: this.sender.companyInfo.address,
-            senderContactName: this.sender.contactName,
-            senderPhoneNumber: this.sender.phoneNumber,
-            recipientCompany: this.recipient.companyInfo.title,
-            recipientAddress: this.recipient.companyInfo.address,
-            recipientContactName: this.recipient.contactName,
-            recipientPhoneNumber: this.recipient.phoneNumber,
+            sender: this.sender,
+            recipient: this.recipient,
+            places: this.places,
             atWhoseExpense: this.atWhoseExpenseSelect,
             delivery: this.deliverySelect,
             date: this.date,
             buyerOrder: this.buyerOrder,
-            dimensions: `${this.length} x ${this.width} x ${this.height} ${this.unitItems.filter(item => item.value === this.unitSelect)[0].text}`,
             isLathing: this.isLathing,
             isInsurance: this.isInsurance,
             costOfCargo: this.costOfCargo,
-            weight: this.weight + ' кг',
-            description: this.description,
+            deliveryComment: this.deliveryComment,
             files: this.files,
             deal: this.deal,
             taskId: this.taskId,
@@ -710,7 +781,18 @@
           this.result = result
           if (result.elementId) {
             this.successSnackbar = true
-            this.description = this.senderPerson = this.senderPersonPhone = this.recipientPerson = this.recipientPersonPhone = this.length = this.width = this.height = this.weight = ''
+            this.places = [
+              {
+                unitSelect: 1,
+                length: '',
+                width: '',
+                height: '',
+                weight: '',
+                natureOfCargo: ''
+              }
+            ]
+            this.isInsurance = this.isLathing = false
+            this.deliveryComment = ''
             this.files = this.observers = []
           } else {
             this.errorSnackbar = true
@@ -720,3 +802,8 @@
     }
   }
 </script>
+<style scoped>
+.tabs-items--active {
+  background-color: inherit !important;
+}
+</style>

@@ -36,5 +36,7 @@
 </script>
 
 <style lang="scss">
-
+.v-tooltip__content.menuable__content__active {
+  opacity: 1!important;
+}
 </style>

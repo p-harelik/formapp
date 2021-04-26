@@ -35,7 +35,7 @@
   margin: 0 auto;
   padding: 1rem 2rem;
   border-radius: .45rem;
-  background-color: #FAFAFA;
+  /*background-color: #FAFAFA;*/
   box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.2);
 }
 .v-card__title {

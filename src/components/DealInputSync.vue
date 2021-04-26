@@ -13,6 +13,7 @@
       chips
       clearable
       cache-items
+      :error-messages="errorMessages"
       @change="$emit('valueChange', $event)"
     >
       <template v-slot:item="{ item }">
@@ -40,6 +41,12 @@ export default {
     title: {
       type: String,
       default: 'Сделка'
+    },
+    errorMessages: {
+      type: Array,
+      default() {
+        return []
+      }
     }
   },
   model: {
