@@ -5,6 +5,7 @@
     label="Сделка"
     prepend-icon="mdi-handshake"
     chips
+    outlined
     readonly
     clearable
     :disabled="isDealPlacement"

@@ -39,15 +39,33 @@
             class="white app-bar"
     >
       <v-app-bar-nav-icon @click="setDrawer"></v-app-bar-nav-icon>
+      <v-breadcrumbs
+      :items="crumbs"
+      divider="/"
+      >
+        <template v-slot:item="{ item }">
+          <v-breadcrumbs-item
+            :to="item.to"
+            exact
+            :disabled="item.disabled"
+          >
+            {{ item.text  }}
+          </v-breadcrumbs-item>
+        </template>
+      </v-breadcrumbs>
     </v-app-bar>
   </nav>
 </template>
 
 <script>
+import crumbs from '../../mixins/crumbs'
+
   export default {
     name: 'Sidebar',
+    mixins: [crumbs],
     data: () => ({
       drawer: false,
+      // crumbs: [],
       selectedItem: 0,
       items: [
         {
@@ -77,15 +95,20 @@
           icon: 'mdi-bulletin-board'
         },
         {
-          title: 'Расчет PolyLED',
-          url: '/polyled',
-          icon: 'mdi-monitor-multiple'
-        },
-        {
-          title: 'Расчет PolyWall',
-          url: '/polywall',
-          icon: 'mdi-tablet-dashboard'
+          title: 'Планирование в график отсутствий',
+          url: '/planning-to-schedule',
+          icon: 'mdi-calendar-month-outline'
         }
+        // {
+        //   title: 'Расчет PolyLED',
+        //   url: '/polyled',
+        //   icon: 'mdi-monitor-multiple'
+        // },
+        // {
+        //   title: 'Расчет PolyWall',
+        //   url: '/polywall',
+        //   icon: 'mdi-tablet-dashboard'
+        // }
       ]
     }),
     methods: {
@@ -93,6 +116,15 @@
         this.drawer = !this.drawer
         localStorage.setItem('drawer', this.drawer)
       }
+      // updateCrumbs() {
+      //   let crumbs = [{
+      //     text: 'Главная',
+      //     to: '/'
+      //   }]
+      //   crumbs = crumbs.concat(this.$route.meta.breadcrumb)
+      //   crumbs.push({ text: this.title, disabled: true })
+      //   this.crumbs = crumbs
+      // }
     },
     created () {
       if (localStorage.getItem('drawer') === 'true') {
@@ -101,6 +133,15 @@
         this.drawer = false
       }
     }
+    // watch: {
+    //   $route: {
+    //     handler() {
+    //       console.warn('update')
+    //       this.updateCrumbs()
+    //     },
+    //     immediate: true
+    //   }
+    // }
   }
 </script>
 

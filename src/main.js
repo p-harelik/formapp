@@ -18,11 +18,11 @@ Vue.use(money, {
   suffix: ''
 })
 
-window.BX24.init(() => {
+// window.BX24.init(() => {
 new Vue({
   router,
   store,
   vuetify,
   render: h => h(App)
 }).$mount('#app')
-})
+// })

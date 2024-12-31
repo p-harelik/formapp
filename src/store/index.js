@@ -8,6 +8,7 @@ import deliveryEquipment from './modules/logistics/deliveryEquipment'
 import workers from './modules/logistics/workers'
 import bookkeeping from './modules/bookkeeping/bookkeeping'
 import projects from './modules/projects/projects'
+import planningInSchedule from './modules/planningInSchedule.js'
 
 Vue.use(Vuex)
 
@@ -20,6 +21,7 @@ export default new Vuex.Store({
     deliveryEquipment,
     workers,
     bookkeeping,
+    planningInSchedule,
     projects
   }
 })

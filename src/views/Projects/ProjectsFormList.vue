@@ -39,6 +39,16 @@
     data: () => ({
       items: [
         {
+          title: 'Оформление командировки',
+          url: 'business-trip',
+          img: './img/business-trip.svg'
+        },
+        {
+          title: 'Планирование в график отсутствий',
+          url: 'planning-to-schedule',
+          img: './img/icon-calendar.png'
+        },
+        {
           title: 'Запрос ресурсов',
           url: 'request-resource',
           img: './img/human-resources.svg'

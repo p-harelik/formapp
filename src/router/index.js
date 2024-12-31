@@ -66,6 +66,14 @@ const routes = [
     component: () => import('../views/Projects/ProjectsFormItem')
   },
   {
+    path: '/planning-to-schedule',
+    name: 'PlanningToSchedule',
+    meta: {
+      breadcrumb: [{ text: 'Реализация проектов', to: '/projects' }]
+    },
+    component: () => import('../views/Planning-to-schedule/PlanningToScheduleForm.vue')
+  },
+  {
     path: '/resources',
     name: 'Resources',
     component: () => import('../views/Resources.vue')

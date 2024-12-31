@@ -3,6 +3,7 @@
     v-model="users"
     :label=label
     prepend-icon="mdi-account-group"
+    outlined
     @click="changeUsers"
     readonly
     multiple

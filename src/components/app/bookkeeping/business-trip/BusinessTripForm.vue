@@ -281,6 +281,11 @@
       deal: { required }
     },
     components: { UsersInput, ProjectInput, DealInput },
+    mounted() {
+      if (this.deal) {
+        this.address = this.deal.objectAddresses.join('; ')
+      }
+    },
     data: () => ({
       users: [],
       tripDates: [],
