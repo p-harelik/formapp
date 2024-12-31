@@ -201,7 +201,7 @@
     },
     mounted() {
       if (this.deal) {
-        this.contactData = this.deal.contactInfo.join('\n')
+        this.contactData = `${this.deal.contactInfo.join('\n')} \n ${this.deal.objectAddresses.join('\n').replaceAll('&quot;', '"')}`
       }
     },
     components: {
