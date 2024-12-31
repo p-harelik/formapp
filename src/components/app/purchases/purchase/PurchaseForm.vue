@@ -45,6 +45,7 @@
           ref="shortTitle"
           label="Краткое наименование заявки"
           autofocus
+          outlined
           :error-messages="shortTitleErrors"
           @input="$v.shortTitle.$touch()"
           @blur="$v.shortTitle.$touch()"
@@ -87,6 +88,7 @@
           ref="description"
           label="Описание закупки"
           auto-grow
+          outlined
           :error-messages="descriptionErrors"
           @input="$v.description.$touch()"
           @blur="$v.description.$touch()"
@@ -96,6 +98,7 @@
           label="Документы (необязательно)"
           multiple
           counter
+          outlined
           prepend-icon="mdi-paperclip"
         >
           <template v-slot:selection="{ text }">

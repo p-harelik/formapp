@@ -70,6 +70,7 @@
                   label="Даты командировки"
                   ref="tripDateRangeText"
                   prepend-icon="mdi-calendar"
+                  outlined
                   :error-messages="tripDateRangeTextErrors"
                   readonly
                   v-bind="attrs"
@@ -126,6 +127,7 @@
                   label="Даты работ на объекте"
                   prepend-icon="mdi-calendar"
                   readonly
+                  outlined
                   v-bind="attrs"
                   v-on="on"
                 ></v-text-field>
@@ -162,6 +164,7 @@
           v-model="address"
           label="Адрес объекта"
           ref="address"
+          outlined
           prepend-icon="mdi-map-marker"
           :error-messages="addressErrors"
           @blur="$v.address.$touch()"
@@ -172,6 +175,7 @@
           label="Цель"
           append-icon=""
           dense
+          outlined
           ref="purpose"
           :error-messages="purposeErrors"
           @blur="$v.purpose.$touch()"
@@ -187,6 +191,7 @@
           label="Предпочтения по гостинице"
           :error-messages="hotelErrors"
           rows="1"
+          outlined
           ref="hotel"
           auto-grow
           @blur="$v.hotel.$touch()"
@@ -201,6 +206,7 @@
           v-if="isTickets"
           label="Предпочтения по трансферу"
           rows="1"
+          outlined
           ref="tickets"
           :error-messages="ticketsErrors"
           @blur="$v.tickets.$touch()"
@@ -217,6 +223,7 @@
           label="Требуемая сумма доп. расходов"
           rows="1"
           ref="money"
+          outlined
           :error-messages="moneyErrors"
           auto-grow
           @blur="$v.money.$touch()"
@@ -225,6 +232,7 @@
           v-model="description"
           label="Комментарий (необязательно)"
           rows="2"
+          outlined
           auto-grow
         ></v-textarea>
         <DealInput
