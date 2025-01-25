@@ -51,6 +51,7 @@ export default {
               id: dealInfo.ID,
               title: dealInfo.TITLE,
               buyerOrder: dealInfo.UF_CRM_1572425882839,
+              parentDealId: dealInfo.UF_CRM_1584540234, // id связанной родительской сделки
               contactInfo: /** @type {string[]} */(dealInfo.UF_CRM_1574062883453), // контакты заказчика
               objectAddresses: dealInfo.UF_CRM_1574079925624 // адреса объектов проведения работ
             })

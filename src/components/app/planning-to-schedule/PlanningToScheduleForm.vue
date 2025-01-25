@@ -191,6 +191,7 @@
   import { mapActions } from 'vuex'
   import DealInput from '../DealInput'
   import UsersInput from '../UsersInput'
+  import Bitrix from '../../../plugins/Bitrix'
 
   export default {
     name: 'PlanningToScheduleForm',
@@ -199,9 +200,20 @@
       planningDateRangeText: { required },
       deal: { required }
     },
-    mounted() {
-      if (this.deal) {
-        this.contactData = `${this.deal.contactInfo.join('\n')} \n ${this.deal.objectAddresses.join('\n').replaceAll('&quot;', '"')}`
+
+    async mounted() {
+      const parentDealId = this.deal?.parentDealId
+
+      if (parentDealId && (!this.deal?.contactInfo.length || !this.deal?.objectAddresses.length)) {
+        const parentDeal = await Bitrix.callMethod('crm.deal.get', { id: parentDealId })
+        const { UF_CRM_1574062883453: parentContactInfo, UF_CRM_1574079925624: parentObjectAddresses } = parentDeal
+
+        const contactInfo = this.deal?.contactInfo.length ? this.deal?.contactInfo : parentContactInfo
+        const addresses = this.deal?.objectAddresses.length ? this.deal?.objectAddresses : parentObjectAddresses
+
+        this.contactData = `${contactInfo.join('\n')} \n ${addresses.join('\n').replaceAll('&quot;', '"')}`
+      } else if (this.deal?.contactInfo.length || this.deal?.objectAddresses.length) {
+        this.contactData = `${this.deal?.contactInfo.join('\n')} \n ${this.deal?.objectAddresses.join('\n').replaceAll('&quot;', '"')}`
       }
     },
     components: {
