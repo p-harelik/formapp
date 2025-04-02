@@ -7,7 +7,7 @@
       transition="scroll-y-transition"
       color="success"
     >
-      Заявка на доставку оборудования № {{result.elementId}} успешно создана!
+      Заявка на компенсацию № {{result.elementId}} успешно создана!
       <template v-slot:action="{ attrs }">
         <v-btn
           color="white"
@@ -172,7 +172,7 @@
           const result = await this.compensationRequest(formData)
           this.loading = false
           this.result = result
-          if (result.elementId) {
+          if (result?.elementId) {
             this.successSnackbar = true
             this.description = this.money = null
             this.files = []

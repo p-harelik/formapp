@@ -7,7 +7,7 @@
       transition="scroll-y-transition"
       color="success"
     >
-      Заявка на оформление командировки № {{result.elementId}} успешно создана!
+      Планирование № {{result.elementId}} успешно создано!
       <template v-slot:action="{ attrs }">
         <v-btn
           color="white"

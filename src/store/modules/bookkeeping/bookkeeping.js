@@ -35,7 +35,7 @@ export default {
             PROPERTY_461: data.money + '|RUB', // сумма
             PREVIEW_TEXT: data.description, // комментарий к оплате
             PROPERTY_463: files,
-            PROPERTY_871: data.deal.id ? data.deal.id : '' // сделка
+            PROPERTY_871: data.deal ? data.deal.id : '' // сделка
           }
         }
           const res = await Bitrix.callMethod('lists.element.add', params)
