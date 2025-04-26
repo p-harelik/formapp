@@ -179,7 +179,7 @@
           type="submit"
           :loading="loading"
         >
-          Оставить заявку
+          Добавить в планирование
         </v-btn>
       </form>
     </div>
@@ -288,7 +288,7 @@
       planningDateRangeTextErrors () {
         const errors = []
         if (!this.$v.planningDateRangeText.$dirty) return errors
-        !this.$v.planningDateRangeText.required && errors.push('Укажите даты командировки')
+        !this.$v.planningDateRangeText.required && errors.push('Укажите даты планирования')
         return errors
       },
       usersErrors () {
