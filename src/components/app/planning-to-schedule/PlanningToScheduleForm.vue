@@ -112,6 +112,9 @@
           v-model="planningType"
           :items="planningTypes"
           outlined
+          multiple
+          chips
+          clearable
           label="Тип планирования"
         ></v-select>
 
@@ -224,19 +227,43 @@
       users: [],
       planningDates: [],
       menu1: false,
-      planningType: 221,
+      planningType: [],
       planningTypes: [
         {
-          value: 221,
-          text: 'Реализация проекта'
+          value: 1239,
+          text: 'Аудит'
         },
+        {
+          value: 1237,
+          text: 'Аварийный выезд'
+        },
+        {
+          value: 1243,
+          text: 'Диагностика'
+        },
+        {
+          value: 1245,
+          text: 'Монтаж демонтаж'
+        },
+        {
+          value: 1249,
+          text: 'Регламентные работы'
+        },
+        // {
+        //   value: 221,
+        //   text: 'Реализация проекта'
+        // },
         {
           value: 223,
-          text: 'Выездной ремонт'
+          text: 'Ремонтные работы'
         },
         {
-          value: 245,
-          text: 'Работы в офисе'
+          value: 1247,
+          text: 'ПНР'
+        },
+        {
+          value: 1241,
+          text: 'Дежурство'
         },
         {
           value: 935,
@@ -245,6 +272,14 @@
         {
           value: 845,
           text: 'Прочее'
+        },
+        {
+          value: 1251,
+          text: 'Сопровождение мероприятий'
+        },
+        {
+          value: 245,
+          text: 'Работы в офисе'
         }
       ],
       company: 1213,
