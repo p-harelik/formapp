@@ -112,6 +112,9 @@
           v-model="planningType"
           :items="planningTypes"
           outlined
+          :error-messages="planningTypeErrors"
+          @change="$v.planningType.$touch()"
+          @blur="$v.planningType.$touch()"
           multiple
           chips
           clearable
@@ -134,6 +137,11 @@
           >
           </v-radio>
         </v-radio-group>
+
+        <v-checkbox
+          v-model="isNeedActOfWork"
+          label="Предоставить акт выполненных работ"
+        />
 
         <v-textarea
           v-model.trim="contactData"
@@ -187,6 +195,7 @@
     name: 'PlanningToScheduleForm',
     validations: {
       users: { required },
+      planningType: { required },
       planningDateRangeText: { required },
       deal: { required }
     },
@@ -285,6 +294,7 @@
           label: 'Polysystems'
         }
       ],
+      isNeedActOfWork: false,
       deal: null,
       contactData: null,
       planningWorks: null,
@@ -307,6 +317,12 @@
           return this.planningDates[0].split('-').reverse().join('-')
         }
         return []
+      },
+      planningTypeErrors () {
+        const errors = []
+        if (!this.$v.planningType.$dirty) return errors
+        !this.$v.planningType.required && errors.push('Укажите тип планирования')
+        return errors
       },
       planningDateRangeTextErrors () {
         const errors = []
@@ -360,7 +376,8 @@
             contactData: this.contactData,
             planningWorks: this.planningWorks,
             files: this.files,
-            deal: this.deal
+            deal: this.deal,
+            isNeedActOfWork: this.isNeedActOfWork
           }
           const result = await this.planningInScheduleRequest(formData)
           this.loading = false

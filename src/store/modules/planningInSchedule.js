@@ -17,6 +17,7 @@ export default {
             PROPERTY_239: data.planningDates[1] || data.planningDates[0], // по какое число
             PROPERTY_325: data.planningType, // тип планирования
             PROPERTY_1975: data.company, // компания
+            PROPERTY_2083: data.isNeedActOfWork ? 1253 : 1255, // нужен ли акт выполненных работ
             PROPERTY_1977: data.contactData, // контактная информация
             PROPERTY_301: data.planningWorks, // планируемые работы
             PROPERTY_1979: files, // файлы
