@@ -149,25 +149,11 @@
           label="Планируемые работы"
           auto-grow/>
 
-          <v-file-input
+        <CustomFileInput
+          class="mb-8"
           v-model="files"
-          multiple
-          outlined
-          id="test_file_input"
           label="Добавить файлы (опционально)"
-          counter
-          prepend-icon="mdi-paperclip"
-        >
-          <template v-slot:selection="{ text }">
-            <v-chip
-              small
-              label
-              color="primary"
-            >
-              {{ text }}
-            </v-chip>
-          </template>
-        </v-file-input>
+        />
 
         <DealInput
           v-model="deal"
@@ -195,6 +181,7 @@
   import DealInput from '../DealInput'
   import UsersInput from '../UsersInput'
   import Bitrix from '../../../plugins/Bitrix'
+  import CustomFileInput from '../../CustomFileInput'
 
   export default {
     name: 'PlanningToScheduleForm',
@@ -221,7 +208,8 @@
     },
     components: {
       UsersInput,
-      DealInput
+      DealInput,
+      CustomFileInput
      },
     data: () => ({
       users: [],

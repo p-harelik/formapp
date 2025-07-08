@@ -69,24 +69,12 @@
           @input="$v.description.$touch()"
           @blur="$v.description.$touch()"
         ></v-textarea>
-        <v-file-input
-          v-model="files"
-          multiple
-          id="test_file_input"
-          label="Чеки, квитанции... (необязательно)"
-          counter
-          prepend-icon="mdi-paperclip"
-        >
-          <template v-slot:selection="{ text }">
-            <v-chip
-              small
-              label
-              color="primary"
-            >
-              {{ text }}
-            </v-chip>
-          </template>
-        </v-file-input>
+
+          <CustomFileInput
+            class="mb-8"
+            v-model="files"
+            label="Чеки, квитанции... (необязательно)"
+          />
         <p class="subtitle-1 font-weight-medium black--text mt-10 mb-4">Дополнительная информация</p>
         <DealInput v-model="deal"/>
         <ProjectInput v-model="project"/>
@@ -109,10 +97,11 @@
   import { required } from 'vuelidate/lib/validators'
   import DealInput from '../../DealInput'
   import ProjectInput from '../../ProjectInput'
+  import CustomFileInput from '../../../CustomFileInput'
 
   export default {
     name: 'CompensationForm',
-    components: { ProjectInput, DealInput },
+    components: { ProjectInput, DealInput, CustomFileInput },
     validations: {
       money: { required },
       description: { required }

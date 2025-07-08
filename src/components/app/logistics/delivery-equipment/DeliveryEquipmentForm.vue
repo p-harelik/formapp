@@ -351,24 +351,11 @@
           @input="$v.description.$touch()"
           @blur="$v.description.$touch()"
         ></v-textarea>
-        <v-file-input
+        <CustomFileInput
+          class="mb-8"
           v-model="files"
-          multiple
-          id="test_file_input"
           label="Документы (необязательно)"
-          counter
-          prepend-icon="mdi-paperclip"
-        >
-          <template v-slot:selection="{ text }">
-            <v-chip
-              small
-              label
-              color="primary"
-            >
-              {{ text }}
-            </v-chip>
-          </template>
-        </v-file-input>
+        />
         <p class="subtitle-1 font-weight-medium black--text mt-10 mb-4">Дополнительная информация</p>
         <DealInput v-model="deal"/>
         <ProjectInput v-model="project"/>
@@ -433,10 +420,10 @@
   import DealInput from '../../DealInput'
   import ProjectInput from '../../ProjectInput'
   import TaskInput from '../../TaskInput'
-
+  import CustomFileInput from '../../../CustomFileInput'
   export default {
     name: 'SendingDocumentsForm',
-    components: { TaskInput, ProjectInput, DealInput },
+    components: { TaskInput, ProjectInput, DealInput, CustomFileInput },
     mixins: [searchCompany, selectObservers],
     validations: {
       senderCompany: { required },

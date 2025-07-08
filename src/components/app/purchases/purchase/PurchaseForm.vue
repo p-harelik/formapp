@@ -93,24 +93,11 @@
           @input="$v.description.$touch()"
           @blur="$v.description.$touch()"
         ></v-textarea>
-        <v-file-input
+        <CustomFileInput
+          class="mb-8"
           v-model="files"
           label="Документы (необязательно)"
-          multiple
-          counter
-          outlined
-          prepend-icon="mdi-paperclip"
-        >
-          <template v-slot:selection="{ text }">
-            <v-chip
-              small
-              label
-              color="primary"
-            >
-              {{ text }}
-            </v-chip>
-          </template>
-        </v-file-input>
+        />
         <v-radio-group
           v-model="whatCompanyPurchaseSelect"
           column
@@ -206,10 +193,10 @@
   import ProjectInput from '../../ProjectInput'
   import TaskInput from '../../TaskInput'
   import DealInput from '../../DealInput'
-
+  import CustomFileInput from '../../../CustomFileInput'
   export default {
     name: 'PurchaseForm',
-    components: { DealInput, TaskInput, ProjectInput },
+    components: { DealInput, TaskInput, ProjectInput, CustomFileInput },
     mixins: [selectObservers],
     validations: {
       shortTitle: { required },
