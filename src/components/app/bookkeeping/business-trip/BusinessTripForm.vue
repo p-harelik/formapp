@@ -291,7 +291,7 @@
     components: { UsersInput, ProjectInput, DealInput },
     mounted() {
       if (this.deal) {
-        this.address = this.deal.objectAddresses.join('; ')
+        this.address = this.deal.objectAddresses.map(address => address.split('|')[0]).join('; ')
       }
     },
     data: () => ({

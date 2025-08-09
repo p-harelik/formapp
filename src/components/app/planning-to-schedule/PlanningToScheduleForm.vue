@@ -210,9 +210,9 @@
         const contactInfo = this.deal?.contactInfo.length ? this.deal?.contactInfo : parentContactInfo
         const addresses = this.deal?.objectAddresses.length ? this.deal?.objectAddresses : parentObjectAddresses
 
-        this.contactData = `${contactInfo.join('\n')} \n ${addresses.join('\n').replaceAll('&quot;', '"')}`
+        this.contactData = `${contactInfo.join('\n')} \n${addresses.map(address => address.split('|')[0]).join('\n').replaceAll('&quot;', '"')}`
       } else if (this.deal?.contactInfo.length || this.deal?.objectAddresses.length) {
-        this.contactData = `${this.deal?.contactInfo.join('\n')} \n ${this.deal?.objectAddresses.join('\n').replaceAll('&quot;', '"')}`
+        this.contactData = `${this.deal?.contactInfo.join('\n')} \n${this.deal?.objectAddresses.map(address => address.split('|')[0]).join('\n').replaceAll('&quot;', '"')}`
       }
     },
     components: {
