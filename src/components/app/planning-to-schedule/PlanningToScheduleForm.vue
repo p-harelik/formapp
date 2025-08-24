@@ -163,6 +163,15 @@
           label="Добавить файлы (опционально)"
         />
 
+        <v-select
+        v-if="checkList.length"
+          v-model="checkListValue"
+          :items="checkList"
+          outlined
+          clearable
+          label="Чек-лист"
+        ></v-select>
+
         <DealInput
           v-model="deal"
           :errorMessages="dealErrors"
@@ -213,6 +222,18 @@
         this.contactData = `${contactInfo.join('\n')} \n${addresses.map(address => address.split('|')[0]).join('\n').replaceAll('&quot;', '"')}`
       } else if (this.deal?.contactInfo.length || this.deal?.objectAddresses.length) {
         this.contactData = `${this.deal?.contactInfo.join('\n')} \n${this.deal?.objectAddresses.map(address => address.split('|')[0]).join('\n').replaceAll('&quot;', '"')}`
+      }
+
+      try {
+        const listFields = await Bitrix.callMethod('lists.field.get', {
+          IBLOCK_TYPE_ID: 'lists',
+          IBLOCK_ID: 47
+        })
+
+        this.checkList = Object.keys(listFields.PROPERTY_2093?.DISPLAY_VALUES_FORM ?? {})
+        .map((key) => ({ value: key, text: listFields.PROPERTY_2093?.DISPLAY_VALUES_FORM[key] }))
+      } catch (error) {
+        console.error(error)
       }
     },
     components: {
@@ -299,6 +320,8 @@
       contactData: null,
       planningWorks: null,
       files: [],
+      checkList: [],
+      checkListValue: null,
       result: '',
       loading: false,
       successSnackbar: false,
@@ -377,7 +400,8 @@
             planningWorks: this.planningWorks,
             files: this.files,
             deal: this.deal,
-            isNeedActOfWork: this.isNeedActOfWork
+            isNeedActOfWork: this.isNeedActOfWork,
+            checkListValue: this.checkListValue
           }
           const result = await this.planningInScheduleRequest(formData)
           this.loading = false

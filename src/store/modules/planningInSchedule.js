@@ -21,6 +21,7 @@ export default {
             PROPERTY_1977: data.contactData, // контактная информация
             PROPERTY_301: data.planningWorks, // планируемые работы
             PROPERTY_1979: files, // файлы
+            PROPERTY_2093: data.checkListValue ?? '',
             PROPERTY_241: data.deal ? data.deal.id : '', // сделка
             PROPERTY_1981: 'application' // источник
           }
