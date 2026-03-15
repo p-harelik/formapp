@@ -12,7 +12,8 @@ export default {
           ELEMENT_CODE: Date.now(),
           FIELDS: {
             NAME: 'Планирование в график отсутствий',
-            PROPERTY_235: data.users, // кого запланировать
+            PROPERTY_235: data.executor, // кого запланировать
+            PROPERTY_2115: data.сoExecutors, // соисполнители
             PROPERTY_2025: data.planningDates[0], // с какого числа
             PROPERTY_239: data.planningDates[1] || data.planningDates[0], // по какое число
             PROPERTY_325: data.planningType, // тип планирования

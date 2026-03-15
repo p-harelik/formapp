@@ -40,11 +40,17 @@
 
     <div class="wrapper-form">
       <form @submit.prevent>
+
+        <UserInput
+          v-model="executor"
+          label="Исполнитель"
+          ref="executor"
+          :error-messages="executorErrors"
+        />
         <UsersInput
-          v-model="users"
-          label="Планируемые сотрудники"
-          ref="users"
-          :error-messages="usersErrors"
+          v-model="сoExecutors"
+          label="Соисполнители"
+          ref="coExecutors"
         />
 
         <v-row>
@@ -176,7 +182,7 @@
           v-model="deal"
           :errorMessages="dealErrors"
           ref="deal"
-          :error-messages="usersErrors"/>
+          :error-messages="executorErrors"/>
 
         <v-btn
           class="mr-4 mb-4"
@@ -197,13 +203,14 @@
   import { mapActions } from 'vuex'
   import DealInput from '../DealInput'
   import UsersInput from '../UsersInput'
+  import UserInput from '../UserInput'
   import Bitrix from '../../../plugins/Bitrix'
   import CustomFileInput from '../../CustomFileInput'
 
   export default {
     name: 'PlanningToScheduleForm',
     validations: {
-      users: { required },
+      executor: { required },
       planningType: { required },
       planningDateRangeText: { required },
       deal: { required }
@@ -238,11 +245,13 @@
     },
     components: {
       UsersInput,
+      UserInput,
       DealInput,
       CustomFileInput
      },
     data: () => ({
-      users: [],
+      executor: null,
+      сoExecutors: [],
       planningDates: [],
       menu1: false,
       planningType: [],
@@ -357,10 +366,10 @@
         !this.$v.planningDateRangeText.required && errors.push('Укажите даты планирования')
         return errors
       },
-      usersErrors () {
+      executorErrors () {
         const errors = []
-        if (!this.$v.users.$dirty) return errors
-        !this.$v.users.required && errors.push('Укажите планируемых сотрудников')
+        if (!this.$v.executor.$dirty) return errors
+        !this.$v.executor.required && errors.push('Укажите планируемых сотрудников')
         return errors
       },
       dealErrors () {
@@ -375,7 +384,8 @@
       resetFields() {
             this.planningDates = []
             this.files = []
-            this.users = []
+            this.executor = null
+            this.сoExecutors = []
             this.contactData = null
             this.planningWorks = null
       },
@@ -396,7 +406,8 @@
           this.$v.$reset()
           this.loading = true
           const formData = {
-            users: this.users.map(user => user.id),
+            executor: this.executor.id,
+            сoExecutors: this.сoExecutors.map(executor => executor.id),
             planningDates: this.planningDates,
             planningType: this.planningType,
             company: this.company,

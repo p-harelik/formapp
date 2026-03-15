@@ -1,7 +1,8 @@
 <template>
   <v-combobox
     v-model="user"
-    label="Сотрудник"
+    :label="label"
+    outlined
     prepend-icon="mdi-account"
     @click="changeUser"
     readonly
@@ -30,7 +31,11 @@
     },
     props: {
       value: [Object, null],
-      errorMessages: Array
+      errorMessages: Array,
+      label: {
+        type: String,
+        default: 'Сотрудник'
+      }
     },
     computed: {
       ...mapGetters(['getUser']),
