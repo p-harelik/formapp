@@ -114,13 +114,10 @@
       result: '',
       loading: false,
       successSnackbar: false,
-      errorSnackbar: false
+      errorSnackbar: false,
+      description: 'Прошу компенсировать расходы в указанной сумме.'
     }),
     computed: {
-      description () {
-        return `Прошу компенсировать расходы в указанной сумме.
-Название проекта: ${this.project?.title ?? ''}`
-      },
       moneyErrors () {
         const errors = []
         if (!this.$v.money.$dirty) return errors
@@ -169,6 +166,12 @@
             this.errorSnackbar = true
           }
         }
+      }
+    },
+    watch: {
+      'project.title' (newVal) {
+        this.description = newVal ? `Прошу компенсировать расходы в указанной сумме.
+Название проекта: ${newVal}` : ''
       }
     }
   }
