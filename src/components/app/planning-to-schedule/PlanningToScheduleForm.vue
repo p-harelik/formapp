@@ -41,12 +41,15 @@
     <div class="wrapper-form">
       <form @submit.prevent>
 
-        <UserInput
-          v-model="executor"
+          <UsersInput
+          :value="executor"
           label="Исполнитель"
-          ref="executor"
-          :error-messages="executorErrors"
+           ref="executor"
+           :multiple="false"
+           :error-messages="executorErrors"
+           @valueChange="userChange"
         />
+
         <UsersInput
           v-model="сoExecutors"
           label="Соисполнители"
@@ -203,7 +206,6 @@
   import { mapActions } from 'vuex'
   import DealInput from '../DealInput'
   import UsersInput from '../UsersInput'
-  import UserInput from '../UserInput'
   import Bitrix from '../../../plugins/Bitrix'
   import CustomFileInput from '../../CustomFileInput'
 
@@ -245,7 +247,6 @@
     },
     components: {
       UsersInput,
-      UserInput,
       DealInput,
       CustomFileInput
      },
@@ -388,6 +389,9 @@
             this.сoExecutors = []
             this.contactData = null
             this.planningWorks = null
+      },
+      userChange(value) {
+        this.executor = value || null
       },
       async submit () {
         console.log(this.$refs)

@@ -8,7 +8,7 @@
     item-value="ID"
     item-text="fullName"
     :filter="customFilter"
-    multiple
+    :multiple="multiple"
     :error-messages="errorMessages"
     ref="users"
     no-data-text="Пользователь не найден"
@@ -24,9 +24,9 @@
           <img :src="item.PERSONAL_PHOTO" alt="">
         </v-avatar>
         {{item.LAST_NAME}} {{item.NAME}}
-        <v-icon
+        <v-icon v-if="multiple"
             small
-            @click.stop="parent.selectItem(item)"
+            @click.stop="parent.selectItem(item);"
           >
             $delete
           </v-icon>
@@ -75,12 +75,16 @@
       event: 'valueChange'
     },
     props: {
-      value: [Array, null],
+      value: [Array, null, Object],
       label: {
         type: String,
         default: 'Сотрудники'
       },
-      errorMessages: Array
+      errorMessages: Array,
+      multiple: {
+        type: Boolean,
+        default: true
+      }
     },
     async created() {
       this.items = await Bitrix.getList({

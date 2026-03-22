@@ -32,6 +32,10 @@
     props: {
       value: [Object, null],
       errorMessages: Array,
+      initByAuthUser: {
+        type: Boolean,
+        default: true
+      },
       label: {
         type: String,
         default: 'Сотрудник'
@@ -61,7 +65,7 @@
       }
     },
     created () {
-      if (this.getUser.id) {
+      if (this.initByAuthUser && this.getUser.id) {
         this.user = {
           id: this.getUser.id,
           name: `${this.getUser.lastName} ${this.getUser.name}`,
