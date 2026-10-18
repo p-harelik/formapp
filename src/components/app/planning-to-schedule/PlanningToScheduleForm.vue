@@ -88,31 +88,59 @@
                 ></v-text-field>
               </template>
 
-              <v-date-picker
-                v-model="planningDates"
-                range
-                locale="ru"
-                selected-items-text='период'
-                first-day-of-week="1"
-              >
-                <v-spacer/>
+              <v-card>
+                <v-date-picker
+                  v-model="planningDates"
+                  range
+                  locale="ru"
+                  selected-items-text="период"
+                  first-day-of-week="1"
+                />
 
-                <v-btn
-                  text
-                  color="primary"
-                  @click="menu1 = false"
-                >
-                  Отмена
-                </v-btn>
+                <v-card-text class="pb-0">
+                  <v-row>
+                    <v-col cols="12" sm="6" class="py-0">
+                      <v-text-field
+                        v-model="planningStartTime"
+                        type="time"
+                        outlined
+                        dense
+                        label="Время начала"
+                      />
+                    </v-col>
 
-                <v-btn
-                  text
-                  color="primary"
-                  @click="$refs.menu1.save(planningDates)"
-                >
-                  OK
-                </v-btn>
-              </v-date-picker>
+                    <v-col cols="12" sm="6" class="py-0">
+                      <v-text-field
+                        v-model="planningEndTime"
+                        type="time"
+                        outlined
+                        dense
+                        label="Время окончания"
+                      />
+                    </v-col>
+                  </v-row>
+                </v-card-text>
+
+                <v-card-actions>
+                  <v-spacer/>
+
+                  <v-btn
+                    text
+                    color="primary"
+                    @click="menu1 = false"
+                  >
+                    Отмена
+                  </v-btn>
+
+                  <v-btn
+                    text
+                    color="primary"
+                    @click="$refs.menu1.save(planningDates)"
+                  >
+                    OK
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
             </v-menu>
           </v-col>
         </v-row>
@@ -219,7 +247,15 @@
     validations: {
       executor: { required },
       planningType: { required },
-      planningDateRangeText: { required },
+      planningDateRangeText: {
+        required,
+        validTimeRange(value, vm) {
+          const [startDate, endDate] = vm.orderedPlanningDates
+          const startTime = vm.planningStartTime || '00:00:00'
+          const endTime = vm.planningEndTime || '23:59:00'
+          return (endDate && endDate !== startDate) || endTime > startTime
+        }
+      },
       deal: { required }
     },
 
@@ -259,6 +295,8 @@
       executor: null,
       сoExecutors: [],
       planningDates: [],
+      planningStartTime: '09:00',
+      planningEndTime: '18:00',
       menu1: false,
       splitPlanningByDays: true,
       planningType: [],
@@ -348,16 +386,19 @@
       errorSnackbar: false
     }),
     computed: {
+      orderedPlanningDates () {
+        return [...this.planningDates].sort()
+      },
       planningDateRangeText () {
-        if (this.planningDates[1]) {
-          let dates = this.planningDates
-          if (dates[0] > dates[1]) {
-            dates = dates.reverse()
-          }
-          return `c ${dates[0].split('-').reverse().join('-')} по ${dates[1].split('-').reverse().join('-')}`
+        const [startDate, endDate] = this.orderedPlanningDates
+        const startTime = ` ${this.planningStartTime || '00:00'}`
+        const endTime = ` ${this.planningEndTime || '23:59'}`
+
+        if (endDate) {
+          return `c ${startDate.split('-').reverse().join('-')}${startTime} по ${endDate.split('-').reverse().join('-')}${endTime}`
         }
-        if (this.planningDates[0]) {
-          return this.planningDates[0].split('-').reverse().join('-')
+        if (startDate) {
+          return `${startDate.split('-').reverse().join('-')}${startTime}${endTime ? `–${endTime.trim()}` : ''}`
         }
         return []
       },
@@ -370,7 +411,11 @@
       planningDateRangeTextErrors () {
         const errors = []
         if (!this.$v.planningDateRangeText.$dirty) return errors
-        !this.$v.planningDateRangeText.required && errors.push('Укажите даты планирования')
+        if (!this.$v.planningDateRangeText.required) {
+          errors.push('Укажите даты планирования')
+        } else if (!this.$v.planningDateRangeText.validTimeRange) {
+          errors.push('Время окончания должно быть позже времени начала')
+        }
         return errors
       },
       executorErrors () {
@@ -390,6 +435,8 @@
       ...mapActions(['planningInScheduleRequest']),
       resetFields() {
             this.planningDates = []
+            this.planningStartTime = '09:00'
+            this.planningEndTime = '18:00'
             this.files = []
             this.executor = null
             this.сoExecutors = []
@@ -399,6 +446,15 @@
       },
       userChange(value) {
         this.executor = value || null
+      },
+      formatDateTime(date, time) {
+        const timeWithSeconds = time.length === 5 ? `${time}:00` : time
+        const offset = -new Date(`${date}T${timeWithSeconds}`).getTimezoneOffset()
+        const sign = offset >= 0 ? '+' : '-'
+        const hours = String(Math.floor(Math.abs(offset) / 60)).padStart(2, '0')
+        const minutes = String(Math.abs(offset) % 60).padStart(2, '0')
+
+        return `${date}T${timeWithSeconds}${sign}${hours}:${minutes}`
       },
       async submit () {
         console.log(this.$refs)
@@ -416,10 +472,14 @@
         } else {
           this.$v.$reset()
           this.loading = true
+          const [startDate, endDate = startDate] = this.orderedPlanningDates
+          const startTime = this.planningStartTime || '00:00:00'
+          const endTime = this.planningEndTime || '23:59:00'
           const formData = {
             executor: this.executor.id,
             сoExecutors: this.сoExecutors.map(executor => executor.id),
-            planningDates: this.planningDates,
+            planningStartDateTime: this.formatDateTime(startDate, startTime),
+            planningEndDateTime: this.formatDateTime(endDate, endTime),
             splitPlanningByDays: this.splitPlanningByDays,
             planningType: this.planningType,
             company: this.company,
