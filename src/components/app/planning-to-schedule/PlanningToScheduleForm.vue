@@ -117,6 +117,11 @@
           </v-col>
         </v-row>
 
+        <v-switch
+          v-model="splitPlanningByDays"
+          label="Разбить планирование по дням"
+        />
+
         <v-select
           v-model="planningType"
           :items="planningTypes"
@@ -255,6 +260,7 @@
       сoExecutors: [],
       planningDates: [],
       menu1: false,
+      splitPlanningByDays: true,
       planningType: [],
       planningTypes: [
         {
@@ -389,6 +395,7 @@
             this.сoExecutors = []
             this.contactData = null
             this.planningWorks = null
+            this.splitPlanningByDays = true
       },
       userChange(value) {
         this.executor = value || null
@@ -413,6 +420,7 @@
             executor: this.executor.id,
             сoExecutors: this.сoExecutors.map(executor => executor.id),
             planningDates: this.planningDates,
+            splitPlanningByDays: this.splitPlanningByDays,
             planningType: this.planningType,
             company: this.company,
             contactData: this.contactData,

@@ -16,6 +16,7 @@ export default {
             PROPERTY_2115: data.сoExecutors, // соисполнители
             PROPERTY_2025: data.planningDates[0], // с какого числа
             PROPERTY_239: data.planningDates[1] || data.planningDates[0], // по какое число
+            PROPERTY_2461: data.splitPlanningByDays ? 2479 : 2481, // разбить планирование по дням
             PROPERTY_325: data.planningType, // тип планирования
             PROPERTY_1975: data.company, // компания
             PROPERTY_2083: data.isNeedActOfWork ? 1253 : 1255, // нужен ли акт выполненных работ
